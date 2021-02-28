@@ -2,7 +2,7 @@
     "compilerOptions": {
       "target": "es6",
       "module": "commonjs",
-      "outDir": "../dist",
+      "outDir": "./dist",
       "strict": true,
       "sourceMap": true,
       "noUnusedLocals": false,
@@ -18,7 +18,7 @@
       "experimentalDecorators": true,
       "emitDecoratorMetadata": true,
       "strictPropertyInitialization": false,
-      "baseUrl": "./",
+      "baseUrl": "src/",
       "paths": {
         "@/*": ["/*"],
         "@controllers/*": ["controllers/*"],
@@ -34,6 +34,6 @@
       "node_modules",
       "**/*.test.ts",
       ".vscode",
-      "../dist"
+      "./dist"
     ]
   }

@@ -1,9 +1,11 @@
-import { Optional, Model, Association, HasManyGetAssociationsMixin, HasManyAddAssociationMixin } from "sequelize";
+import { initSequelize } from "@helpers/database/sequelize";
+import { Optional, Model, Association, HasManyGetAssociationsMixin, HasManyAddAssociationMixin, DataTypes } from "sequelize";
 import { Product } from "./Product";
 
 export interface SupplierAttributes {
 	id: number;
 	name: string;
+    address?: string;
 }
 
 export interface SupplierCreationAttributes extends Optional<SupplierAttributes, "id"> { }
@@ -11,6 +13,7 @@ export interface SupplierCreationAttributes extends Optional<SupplierAttributes,
 export class Supplier extends Model<SupplierAttributes, SupplierCreationAttributes> {
     public id!: number;
     public name: string;
+    public address?: string;
 
     public products?: Product[];
 
@@ -21,3 +24,31 @@ export class Supplier extends Model<SupplierAttributes, SupplierCreationAttribut
         products: Association<Product, Supplier>
     }
 }
+
+export const initSupplier = () => {
+	Supplier.init(
+		{
+			id: {
+				type: DataTypes.INTEGER.UNSIGNED,
+				autoIncrement: true,
+				primaryKey: true
+			},
+            name: {
+                type: DataTypes.STRING
+            },
+            address:{
+                type: DataTypes.STRING
+            }
+		},
+		{
+			tableName: "Supplier",
+			timestamps: false,
+      		paranoid: true,
+			sequelize: initSequelize()
+		}
+	);
+}
+
+export const associateSupplier = () => {
+	Supplier.hasMany(Product);
+};

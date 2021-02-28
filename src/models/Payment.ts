@@ -1,10 +1,12 @@
-import { Association, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, Model, Optional } from "sequelize";
+import { initSequelize } from "@helpers/database/sequelize";
+import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, Model, Optional } from "sequelize";
 import { PaymentType } from "../enumerators/PaymentType";
 import { Order } from "./Order";
 
 export interface PaymentAttributes {
 	id: number;
     type: PaymentType;
+    installments?: number;
 }
 
 interface PaymentCreationAttributes extends Optional<PaymentAttributes, "id"> { }
@@ -23,3 +25,31 @@ export class Payment extends Model<PaymentAttributes, PaymentCreationAttributes>
 		order: Association<Order, Payment>
 	};
 }
+
+export const initPayment = () => {
+	Payment.init(
+		{
+			id: {
+				type: DataTypes.INTEGER.UNSIGNED,
+				autoIncrement: true,
+				primaryKey: true
+			},
+            type: {
+                type: DataTypes.ENUM({ values: Object.keys(PaymentType) })
+            },
+            installments: {
+                type: DataTypes.INTEGER
+            }
+		},
+		{
+			tableName: "Payment",
+			timestamps: false,
+      		paranoid: true,
+			sequelize: initSequelize()
+		}
+	);
+}
+
+export const associatePayment = () => {
+	Payment.belongsTo(Order);
+};

@@ -1,10 +1,11 @@
-import { Association, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, Model, Optional } from "sequelize";
+import { initSequelize } from "@helpers/database/sequelize";
+import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, Model, Optional } from "sequelize";
 import { CouponType } from "../enumerators/CouponType";
 import { Order } from "./Order";
 
 export interface CouponAttributes {
 	id: number;
-    userId: number;
+    code: string;
     type: CouponType;
     value: number;
 }
@@ -27,3 +28,34 @@ export class Coupon extends Model<CouponAttributes, CouponCreationAttributes>{
 		order: Association<Order, Coupon>
 	};
 }
+
+export const initCoupon = () => {
+	Coupon.init(
+		{
+			id: {
+				type: DataTypes.INTEGER.UNSIGNED,
+				autoIncrement: true,
+				primaryKey: true
+			},
+			code: {
+                type: DataTypes.STRING
+            },
+            type: {
+                type: DataTypes.ENUM({ values: Object.keys(CouponType) })
+            },
+            value: {
+                type: DataTypes.DECIMAL
+            }
+		},
+		{
+			tableName: "Coupon",
+			timestamps: false,
+      		paranoid: true,
+			sequelize: initSequelize()
+		}
+	);
+}
+
+export const associateCoupon = () => {
+	Coupon.hasMany(Order);
+};

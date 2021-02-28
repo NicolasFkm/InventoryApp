@@ -4,7 +4,8 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"start": "node --inspect=5858 -r ts-node/register ./src/app.ts",
+		"start": "node --inspect=5858 -r ts-node/register  -r tsconfig-paths/register ./src/app.ts",
+		"prod": "node --inspect=5858 -r ts-node/register ./dist/app.js",
 		"start:watch": "nodemon",
 		"build": "tsc -p src",
 		"watch": "nodemon src",
@@ -53,12 +54,23 @@
 		"ext": "ts"
 	},
 	"_moduleAliases": {
-		"@": ["dist"],
-		"@controllers": ["dist/controllers"],
-        "@models": ["dist/models"],
-        "@routes": ["dist/routes"],
-        "@services": ["dist/services"],
-        "@helpers": ["dist/helpers"],
-        "@utils": ["dist/utils"]
-	  }
+		"@controllers": [
+			"controllers"
+		],
+		"@models": [
+			"models"
+		],
+		"@routes": [
+			"routes"
+		],
+		"@services": [
+			"services"
+		],
+		"@helpers": [
+			"helpers"
+		],
+		"@utils": [
+			"utils"
+		]
+	}
 }

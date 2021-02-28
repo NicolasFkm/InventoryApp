@@ -1,4 +1,4 @@
-import sequelize from "@helpers/database/sequelize";
+import {initSequelize} from '@helpers/database/sequelize';
 import { Optional, HasManyAddAssociationMixin, Model, Association, HasManyGetAssociationsMixin, DataTypes } from "sequelize";
 import { Product } from "./Product";
 
@@ -37,10 +37,10 @@ export const initCategory = () => {
 			}
 		},
 		{
-			tableName: "messages",
+			tableName: "Category",
 			timestamps: false,
       		paranoid: true,
-			sequelize: sequelize()
+			sequelize: initSequelize()
 		}
 	);
 }
