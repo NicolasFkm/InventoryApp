@@ -1,5 +1,5 @@
 import { initSequelize } from "@helpers/database/sequelize";
-import { Association, DataTypes, Model } from "sequelize";
+import { Association, DataTypes, Model, Sequelize } from "sequelize";
 import { Optional } from "sequelize";
 import { Order } from "./Order";
 import { Product } from "./Product";
@@ -7,11 +7,9 @@ import { Product } from "./Product";
 export interface OrderProductAttributes {
     id: number;
     quantity: number;
-    productId: number;
-    orderId: number;
 }
 
-interface OrderProductCreationAttributes extends Optional<OrderProductAttributes, "id"> { }
+export interface OrderProductCreationAttributes extends Optional<OrderProductAttributes, "id"> { }
 
 export class OrderProduct extends Model<OrderProductAttributes, OrderProductCreationAttributes>{
     public id: number;
@@ -26,7 +24,7 @@ export class OrderProduct extends Model<OrderProductAttributes, OrderProductCrea
     }
 }
 
-export const initOrderProduct = () => {
+export const initOrderProduct = (sequelize: Sequelize) => {
     OrderProduct.init(
         {
             id: {
@@ -36,35 +34,13 @@ export const initOrderProduct = () => {
             },
             quantity: {
                 type: DataTypes.INTEGER
-            },
-            orderId: {
-                type: DataTypes.INTEGER.UNSIGNED,
-                primaryKey: false,
-                references: {
-                    model: 'Order',
-                    key: 'orderId'
-                },
-                onDelete: 'cascade',
-                onUpdate: 'cascade',
-                unique: 'unique-genre-per-post'
-            },
-            productId: {
-                type: DataTypes.INTEGER.UNSIGNED,
-                primaryKey: false,
-                references: {
-                    model: 'Product',
-                    key: 'productId'
-                },
-                onDelete: 'cascade',
-                onUpdate: 'cascade',
-                unique: 'unique-genre-per-post'
-            },
+            }
         },
         {
             tableName: "OrderProduct",
             timestamps: false,
             paranoid: true,
-            sequelize: initSequelize()
+            sequelize: sequelize
         }
     );
 }

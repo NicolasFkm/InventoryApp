@@ -1,6 +1,6 @@
 import { initSequelize } from "@helpers/database/sequelize";
-import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, Model, Optional } from "sequelize";
-import { PaymentType } from "../enumerators/PaymentType";
+import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, Model, Optional, Sequelize } from "sequelize";
+import { PaymentType } from "@enumerators/PaymentType";
 import { Order } from "./Order";
 
 export interface PaymentAttributes {
@@ -9,7 +9,7 @@ export interface PaymentAttributes {
     installments?: number;
 }
 
-interface PaymentCreationAttributes extends Optional<PaymentAttributes, "id"> { }
+export interface PaymentCreationAttributes extends Optional<PaymentAttributes, "id"> { }
 
 export class Payment extends Model<PaymentAttributes, PaymentCreationAttributes>{
     public id!: number;
@@ -26,7 +26,7 @@ export class Payment extends Model<PaymentAttributes, PaymentCreationAttributes>
 	};
 }
 
-export const initPayment = () => {
+export const initPayment = (sequelize: Sequelize) => {
 	Payment.init(
 		{
 			id: {
@@ -45,7 +45,7 @@ export const initPayment = () => {
 			tableName: "Payment",
 			timestamps: false,
       		paranoid: true,
-			sequelize: initSequelize()
+			sequelize: sequelize
 		}
 	);
 }

@@ -1,5 +1,5 @@
 import { initSequelize } from "@helpers/database/sequelize";
-import { Optional, Model, Association, HasManyGetAssociationsMixin, HasManyAddAssociationMixin, DataTypes } from "sequelize";
+import { Optional, Model, Association, HasManyGetAssociationsMixin, HasManyAddAssociationMixin, DataTypes, Sequelize } from "sequelize";
 import { Product } from "./Product";
 
 export interface SupplierAttributes {
@@ -25,7 +25,7 @@ export class Supplier extends Model<SupplierAttributes, SupplierCreationAttribut
     }
 }
 
-export const initSupplier = () => {
+export const initSupplier = (sequelize: Sequelize) => {
 	Supplier.init(
 		{
 			id: {
@@ -44,7 +44,7 @@ export const initSupplier = () => {
 			tableName: "Supplier",
 			timestamps: false,
       		paranoid: true,
-			sequelize: initSequelize()
+			sequelize: sequelize
 		}
 	);
 }

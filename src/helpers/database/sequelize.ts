@@ -27,15 +27,15 @@ export const initSequelize = ()=>{
     return sequelize;
 };
 
-export const configDB = () => {
-    initCategory();
-    initCoupon();
-    initOrder();
-    initOrderProduct();
-    initPayment();
-    initProduct();
-    initSupplier();
-    initUser();
+export const configDB = (sequelize: Sequelize) => {
+    initCategory(sequelize);
+    initCoupon(sequelize);
+    initOrder(sequelize);
+    initOrderProduct(sequelize);
+    initPayment(sequelize);
+    initProduct(sequelize);
+    initSupplier(sequelize);
+    initUser(sequelize);
     associateCategory();
     associateCoupon();
     associateOrder();

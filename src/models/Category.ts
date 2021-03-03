@@ -1,5 +1,5 @@
 import {initSequelize} from '@helpers/database/sequelize';
-import { Optional, HasManyAddAssociationMixin, Model, Association, HasManyGetAssociationsMixin, DataTypes } from "sequelize";
+import { Optional, HasManyAddAssociationMixin, Model, Association, HasManyGetAssociationsMixin, DataTypes, Sequelize } from "sequelize";
 import { Product } from "./Product";
 
 export interface ProductAttributes {
@@ -23,7 +23,7 @@ export class Category extends Model<ProductAttributes, ProductCreationAttributes
 	};
 }
 
-export const initCategory = () => {
+export const initCategory = (sequelize: Sequelize) => {
 	Category.init(
 		{
 			id: {
@@ -34,13 +34,14 @@ export const initCategory = () => {
 			name: {
 				type: new DataTypes.STRING(255),
 				allowNull: false,
+                unique: true
 			}
 		},
 		{
 			tableName: "Category",
 			timestamps: false,
       		paranoid: true,
-			sequelize: initSequelize()
+			sequelize: sequelize
 		}
 	);
 }

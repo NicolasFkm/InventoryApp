@@ -1,6 +1,6 @@
 import { initSequelize } from "@helpers/database/sequelize";
-import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, Model, Optional } from "sequelize";
-import { CouponType } from "../enumerators/CouponType";
+import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, Model, Optional, Sequelize } from "sequelize";
+import { CouponType } from "@enumerators/CouponType";
 import { Order } from "./Order";
 
 export interface CouponAttributes {
@@ -10,7 +10,7 @@ export interface CouponAttributes {
     value: number;
 }
 
-interface CouponCreationAttributes extends Optional<CouponAttributes, "id"> { }
+export interface CouponCreationAttributes extends Optional<CouponAttributes, "id"> { }
 
 export class Coupon extends Model<CouponAttributes, CouponCreationAttributes>{
     public id!: number;
@@ -29,7 +29,7 @@ export class Coupon extends Model<CouponAttributes, CouponCreationAttributes>{
 	};
 }
 
-export const initCoupon = () => {
+export const initCoupon = (sequelize: Sequelize) => {
 	Coupon.init(
 		{
 			id: {
@@ -51,7 +51,7 @@ export const initCoupon = () => {
 			tableName: "Coupon",
 			timestamps: false,
       		paranoid: true,
-			sequelize: initSequelize()
+			sequelize: sequelize
 		}
 	);
 }

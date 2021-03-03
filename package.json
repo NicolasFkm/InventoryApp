@@ -38,7 +38,8 @@
 		"reflect-metadata": "^0.1.13",
 		"sequelize": "^6.4.0",
 		"sequelize-typescript": "^2.0.0",
-		"sqlite3": "^5.0.2"
+		"sqlite3": "^5.0.2",
+		"validator": "^13.5.2"
 	},
 	"nodemonConfig": {
 		"ignore": [
@@ -54,6 +55,9 @@
 		"ext": "ts"
 	},
 	"_moduleAliases": {
+		"@enumerators": [
+			"enumerators"
+		],
 		"@controllers": [
 			"controllers"
 		],

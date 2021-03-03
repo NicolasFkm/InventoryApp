@@ -1,7 +1,7 @@
 import { initSequelize } from "@helpers/database/sequelize";
-import { ProductStatus } from "enumerators/ProductStatus";
-import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, Model, Optional } from "sequelize";
-import { PaymentType } from "../enumerators/PaymentType";
+import { ProductStatus } from "@enumerators/ProductStatus";
+import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, Model, Optional, Sequelize } from "sequelize";
+import { PaymentType } from "@enumerators/PaymentType";
 import { Coupon } from "./Coupon";
 import { OrderProduct } from "./OrderProduct";
 import { Payment } from "./Payment";
@@ -16,7 +16,7 @@ export interface OrderAttributes {
     products?: OrderProduct[];
 }
 
-interface OrderCreationAttributes extends Optional<OrderAttributes, "id"> { }
+export interface OrderCreationAttributes extends Optional<OrderAttributes, "id"> { }
 
 export class Order extends Model<OrderAttributes, OrderCreationAttributes>{
     public id!: number;
@@ -43,7 +43,7 @@ export class Order extends Model<OrderAttributes, OrderCreationAttributes>{
 	};
 }
 
-export const initOrder = () => {
+export const initOrder = (sequelize: Sequelize) => {
 	Order.init(
 		{
 			id: {
@@ -56,13 +56,13 @@ export const initOrder = () => {
 			tableName: "Order",
 			timestamps: false,
       		paranoid: true,
-			sequelize: initSequelize()
+			sequelize: sequelize
 		}
 	);
 }
 
 export const associateOrder = () => {
-	Order.hasOne(Coupon);
+	Order.belongsTo(Coupon);
     Order.hasMany(Payment);
     Order.belongsTo(User);
     Order.belongsToMany(Product, {through: typeof OrderProduct});

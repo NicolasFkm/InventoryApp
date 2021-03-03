@@ -1,6 +1,6 @@
 import { initSequelize } from "@helpers/database/sequelize";
-import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, Model, Optional } from "sequelize";
-import { Role } from "../enumerators/Role";
+import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, Model, Optional, Sequelize } from "sequelize";
+import { Role } from "@enumerators/Role";
 import { Order } from "./Order";
 import { Product } from "./Product";
 
@@ -13,7 +13,7 @@ export interface UserAttributes {
     role: Role;
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, "id"> { }
+export interface UserCreationAttributes extends Optional<UserAttributes, "id"> { }
 
 export class User extends Model<UserAttributes, UserCreationAttributes> {
     public id!: number;
@@ -34,7 +34,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes> {
 	};
 }
 
-export const initUser = () => {
+export const initUser = (sequelize: Sequelize) => {
 	User.init(
 		{
 			id: {
@@ -43,16 +43,25 @@ export const initUser = () => {
 				primaryKey: true
 			},
             name: {
-                type: DataTypes.STRING
+                type: DataTypes.STRING,
+                allowNull: false
             },
             username:{
-                type: DataTypes.STRING
+                type: DataTypes.STRING,
+                allowNull: false,
+                unique: true
             },
             email:{
-                type: DataTypes.STRING
+                type: DataTypes.STRING,
+                allowNull: false,
+                unique: true,
+                validate: {
+                    isEmail: true
+                }
             },
             password:{
-                type: DataTypes.STRING
+                type: DataTypes.STRING,
+                allowNull: false
             },
             role:{
                 type: DataTypes.ENUM({values: Object.keys(Role)})
@@ -62,7 +71,7 @@ export const initUser = () => {
 			tableName: "User",
 			timestamps: false,
       		paranoid: true,
-			sequelize: initSequelize()
+			sequelize: sequelize
 		}
 	);
 }

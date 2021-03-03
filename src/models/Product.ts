@@ -1,6 +1,6 @@
 import { initSequelize } from "@helpers/database/sequelize";
-import { Association, DataTypes, HasManyAddAssociationMixin, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, Model, Optional } from "sequelize";
-import { ProductStatus } from "../enumerators/ProductStatus";
+import { Association, DataTypes, HasManyAddAssociationMixin, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, Model, Optional, Sequelize } from "sequelize";
+import { ProductStatus } from "@enumerators/ProductStatus";
 import { Category } from "./Category";
 import { Order } from "./Order";
 import { OrderProduct } from "./OrderProduct";
@@ -47,7 +47,7 @@ export class Product extends Model<ProductAttributes, ProductCreationAttributes>
 	};
 }
 
-export const initProduct = () => {
+export const initProduct = (sequelize: Sequelize) => {
 	Product.init(
 		{
 			id: {
@@ -62,7 +62,9 @@ export const initProduct = () => {
                 type: DataTypes.INTEGER
             },
             barcode: {
-                type: DataTypes.STRING
+                type: DataTypes.STRING,
+                allowNull: false,
+                unique: true
             },
             price: {
                 type: DataTypes.DECIMAL
@@ -81,7 +83,7 @@ export const initProduct = () => {
 			tableName: "Product",
 			timestamps: false,
       		paranoid: true,
-			sequelize: initSequelize()
+			sequelize: sequelize
 		}
 	);
 }
