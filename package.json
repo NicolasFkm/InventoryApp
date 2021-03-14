@@ -2,10 +2,10 @@
 	"name": "MixturaManagement",
 	"version": "1.0.0",
 	"description": "",
-	"main": "index.js",
+	"main": "server.js",
 	"scripts": {
-		"start": "node --inspect=5858 -r ts-node/register  -r tsconfig-paths/register ./src/app.ts",
-		"prod": "node --inspect=5858 -r ts-node/register ./dist/app.js",
+		"start": "node --inspect=5858 -r ts-node/register  -r tsconfig-paths/register ./src/server.ts",
+		"prod": "node --inspect=5858 -r ts-node/register ./dist/server.js",
 		"start:watch": "nodemon",
 		"build": "tsc -p src",
 		"watch": "nodemon src",

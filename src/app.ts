@@ -1,35 +1,24 @@
 import express from 'express';
 import bodyParser from "body-parser";
-import dotenv from 'dotenv';
 import helmet from 'helmet';
-import {configDB, initSequelize} from '@helpers/database/sequelize';
-import { User, UserCreationAttributes, UserAttributes } from '@models/User';
-import { Role } from '@enumerators/Role';
-import { type } from 'os';
-import UserService from '@services/UserService';
+import { Routes } from '@routes/Routes';
 
-dotenv.config();
-const PORT = process.env.PORT || 3000;
-const app = express();
-const db = initSequelize();
-configDB(db);
+class App {
+    public app: express.Application;
+    public router: Routes;
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(helmet());
-
-(async () => {
-    try{
-
-        await db.authenticate();
-        console.log('Connection has been established successfully.');    
-        await db.sync();
-
-        app.listen(PORT, () => {
-            console.log(`SERVER ON at ${PORT}`);
-        });
+    constructor() {
+        this.app = express();
+        this.config();
+        this.router = new Routes();
+        this.router.map(this.app);
     }
-    catch(error) {
-        console.log(error);
+
+    private config(): void {
+        this.app.use(bodyParser.json());
+        this.app.use(bodyParser.urlencoded({ extended: true }));
+        this.app.use(helmet());
     }
-})();
+}
+
+export default new App().app;
