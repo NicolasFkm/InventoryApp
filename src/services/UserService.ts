@@ -1,19 +1,23 @@
 import { Role } from "@enumerators/Role";
 import { InvalidArgumentException } from "@helpers/errors/InvalidArgumentException";
 import { User, UserAttributes, UserCreationAttributes } from "@models/User";
-import { ValidationFailed } from "sequelize-typescript";
+import UserRepository from "@repositories/UserRepository";
 import validator from 'validator';
+import bcrypt from 'bcrypt';
 
 export default class UserService {
 
+    private _salt: number = 12;
+    public userRepository: UserRepository;
+
     async getById(id: number): Promise<User | null> {
-        const user = await User.findByPk(id, { include: [{ all: true }] });
+        const user = await this.userRepository.getById(id);
 
         return user;
     }
 
     async getAll(): Promise<User[]> {
-        const user = await User.findAll({ include: [{ all: true }] });
+        const user = await this.userRepository.getAll();
 
         return user;
     }
@@ -22,7 +26,9 @@ export default class UserService {
 
         this.validate(user);
 
-        const createdUser = await User.create(user);
+        user.password = await bcrypt.hash(user.password, this._salt);
+
+        const createdUser = this.userRepository.add(user);;
 
         return createdUser;
     }
@@ -30,11 +36,15 @@ export default class UserService {
     async update(id: number, updateData: Partial<UserCreationAttributes>): Promise<User|undefined> {        
         const user = await User.findByPk(id, { include: [{ all: true }] });
         
+        if(user == null) {
+            throw new InvalidArgumentException("Invalid user identifier.");
+        }
+
         let userData: UserCreationAttributes = {...user, ...updateData} as UserCreationAttributes;
         
         this.validate(userData);
 
-        const updatedUser = await user?.update(updateData)
+        const updatedUser = await this.userRepository.update(user, updateData)
 
         return updatedUser;
     }

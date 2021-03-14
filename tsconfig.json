@@ -23,6 +23,7 @@
         "@/*": ["/*"],
         "@enumerators/*": ["enumerators/*"],
         "@controllers/*": ["controllers/*"],
+        "@repositories/*": ["repositories/*"],
         "@models/*": ["models/*"],
         "@routes/*": ["routes/*"],
         "@services/*": ["services/*"],
