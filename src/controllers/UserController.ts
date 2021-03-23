@@ -20,7 +20,12 @@ export default class UserController {
         try{
             let { name, username, email, password, role }: { name: string, username: string, email: string, password: string, role: number}  = req.body;
             
-            const account = {name, username, email, password, role} as UserCreationAttributes;
+            const account = {
+                name: name.toLowerCase(), 
+                username: username.toLowerCase(), 
+                email: email.toLowerCase(), 
+                password, 
+                role} as UserCreationAttributes;
 
             const createdAccount = await this.userService.create(account);
             

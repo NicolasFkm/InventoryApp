@@ -8,7 +8,7 @@ export interface CategoryAttributes {
 
 export interface CategoryCreationAttributes extends Optional<CategoryAttributes, "id"> { }
 
-export class Category extends Model<CategoryAttributes, CategoryCreationAttributes>{
+export class Category extends Model{
     public id!: number;
     public name!: string;
 

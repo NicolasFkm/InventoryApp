@@ -37,11 +37,10 @@ export class Product extends Model<ProductAttributes, ProductCreationAttributes>
     public orders?: Order[];
     public purchases?: Purchase[];
 
-    public addCategory!: HasOneCreateAssociationMixin<Category>;
     public getCategory!: HasOneGetAssociationMixin<Category>;
-    public addSupplier!: HasOneCreateAssociationMixin<Supplier>;
     public getSupplier!: HasOneGetAssociationMixin<Supplier>;
     public getPurchases!: HasManyGetAssociationsMixin<Purchase>;
+    public getOrders!: HasManyGetAssociationsMixin<Order>;
 
     public static associations: {
 		orders: Association<Order, Product>,
@@ -67,8 +66,7 @@ export const initProduct = (sequelize: Sequelize) => {
             },
             barcode: {
                 type: DataTypes.STRING,
-                allowNull: true,
-                unique: true
+                allowNull: true
             },
             price: {
                 type: DataTypes.DECIMAL
@@ -81,7 +79,8 @@ export const initProduct = (sequelize: Sequelize) => {
                 allowNull: true
             },
             status: {
-                type: DataTypes.ENUM({ values: Object.keys(ProductStatus) })
+                type: DataTypes.ENUM({ values: Object.keys(ProductStatus) }),
+                defaultValue: 0
             }
 		},
 		{

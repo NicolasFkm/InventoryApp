@@ -20,9 +20,12 @@ export default class UserController {
 
     public postAuthenticate =  async (req: Request, res: Response) : Promise<void> => {
         try{
-            let { email, password, ...body}: {email: string, password:string, body: any}  = req.body;
+            let { email, password}: {email: string, password:string }  = req.body;
             
-            const login = {email, password} as Login;
+            const login = {
+                email: email.toLowerCase(), 
+                password
+            } as Login;
 
             const isAuthenticated = await this.loginService.authenticate(login);
             

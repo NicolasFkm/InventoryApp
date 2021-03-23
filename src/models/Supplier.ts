@@ -12,7 +12,7 @@ export interface SupplierAttributes {
 
 export interface SupplierCreationAttributes extends Optional<SupplierAttributes, "id"> { }
 
-export class Supplier extends Model<SupplierAttributes, SupplierCreationAttributes> {
+export class Supplier extends Model {
     public id!: number;
     public name: string;
     public address?: string;

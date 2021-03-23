@@ -6,25 +6,36 @@ import EntityCollectionResponse from '@models/responses/EntityCollectionResponse
 import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
 import ProductService from '@services/ProductService';
+import SupplierService from '@services/SupplierService';
 import { Response, Request } from 'express';
 
 export default class ProductController {
 
     public productService: ProductService;
+    public supplierService: SupplierService;
 
     constructor(){
         this.productService = new ProductService();;
+        this.supplierService = new SupplierService();;
     }
 
     public postCreate = async(req: Request, res: Response) : Promise<Response> => {
         try{
             let { name, price, costPrice, description, quantity, status, barcode, supplierId }: 
-            { name: string, price: number, costPrice: number, description: string, quantity: number, status: number, barcode: string|undefined, supplierId: number}  = req.body;
+            { name: string, price: number, costPrice: number, description: string|undefined, quantity: number, status: number, barcode: string|undefined, supplierId: number|undefined}  = req.body;
             
             const product = { name, price, costPrice, description, quantity, status, barcode } as ProductCreationAttributes;
 
             const createdProduct = await this.productService.create(product);
             
+            if(supplierId != undefined){
+                const supplier = await this.supplierService.getById(supplierId);
+                if(supplier) {
+                    supplier.addProduct(createdProduct!);
+                    // supplier?.save();
+                }
+            }
+
             let response = new EntityResponse(createdProduct, req.url);
             
             let responseStatus = HttpStatus.SUCCESS;

@@ -1,4 +1,6 @@
+import { Category } from "@models/Category";
 import { Product, ProductCreationAttributes } from "@models/Product";
+import { Supplier } from "@models/Supplier";
 
 export default class ProductRepository {
 
@@ -9,7 +11,7 @@ export default class ProductRepository {
     }
 
     async getAll(): Promise<Product[]> {
-        const product = await Product.findAll({ include: [{ all: true }] });
+        const product = await Product.findAll({ include: [Supplier, Category] });
 
         return product;
     }

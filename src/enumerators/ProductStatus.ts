@@ -1,3 +1,3 @@
 export enum ProductStatus{
-    Default
+    Available
 }
