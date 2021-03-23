@@ -1,4 +1,3 @@
-import { initSequelize } from "@helpers/database/sequelize";
 import { Optional, Model, Association, HasManyGetAssociationsMixin, HasManyAddAssociationMixin, DataTypes, Sequelize } from "sequelize";
 import { Product } from "./Product";
 
@@ -6,6 +5,9 @@ export interface SupplierAttributes {
 	id: number;
 	name: string;
     address?: string;
+	city?: string;
+	state?: string;
+	zipCode?: string;
 }
 
 export interface SupplierCreationAttributes extends Optional<SupplierAttributes, "id"> { }
@@ -14,6 +16,9 @@ export class Supplier extends Model<SupplierAttributes, SupplierCreationAttribut
     public id!: number;
     public name: string;
     public address?: string;
+    public city?: string;
+    public state?: string;
+    public zipCode?: string;
 
     public products?: Product[];
 

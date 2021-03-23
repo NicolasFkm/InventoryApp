@@ -11,7 +11,7 @@ export default class LoginService {
     }
 
     public authenticate = async(login: Login) : Promise<boolean> => {
-        const account = await this.userRepository.getById(login.id);
+        const account = await this.userRepository.getByEmail(login.email);
         
         if(account == null){
             return false;

@@ -8,6 +8,8 @@ import { associatePayment, initPayment } from "@models/Payment";
 import { associateProduct, initProduct } from "@models/Product";
 import { associateSupplier, initSupplier } from "@models/Supplier";
 import { associateUser, initUser } from "@models/User";
+import { associatePurchaseProduct, initPurchaseProduct } from "@models/PurchaseProduct";
+import { associatePurchase, initPurchase } from "@models/Purchase";
 
 export const initSequelize = ()=>{
     const databasePath = path.join(__dirname, process.env.DATABASE_NAME!);
@@ -36,6 +38,8 @@ export const configDB = (sequelize: Sequelize) => {
     initProduct(sequelize);
     initSupplier(sequelize);
     initUser(sequelize);
+    initPurchase(sequelize);
+    initPurchaseProduct(sequelize);
     associateCategory();
     associateCoupon();
     associateOrder();
@@ -44,4 +48,6 @@ export const configDB = (sequelize: Sequelize) => {
     associateProduct();
     associateSupplier();
     associateUser();
+    associatePurchase();
+    associatePurchaseProduct();
 }

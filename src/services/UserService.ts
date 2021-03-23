@@ -10,6 +10,10 @@ export default class UserService {
     private _salt: number = 12;
     public userRepository: UserRepository;
 
+    constructor(){
+        this.userRepository = new UserRepository();
+    }
+
     async getById(id: number): Promise<User | null> {
         const user = await this.userRepository.getById(id);
 

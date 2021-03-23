@@ -1,34 +1,35 @@
 import { HttpStatus } from '@enumerators/HttpStatus';
 import { DataNotFoundException } from '@helpers/errors/DataNotFoundException';
 import { InvalidArgumentException } from '@helpers/errors/InvalidArgumentException';
-import { UserCreationAttributes } from '@models/User';
+import { ProductCreationAttributes } from '@models/Product';
 import EntityCollectionResponse from '@models/responses/EntityCollectionResponse';
 import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
-import UserService from '@services/UserService';
+import ProductService from '@services/ProductService';
 import { Response, Request } from 'express';
 
-export default class UserController {
+export default class ProductController {
 
-    public userService: UserService;
+    public productService: ProductService;
 
     constructor(){
-        this.userService = new UserService();;
+        this.productService = new ProductService();;
     }
 
     public postCreate = async(req: Request, res: Response) : Promise<Response> => {
         try{
-            let { name, username, email, password, role }: { name: string, username: string, email: string, password: string, role: number}  = req.body;
+            let { name, price, costPrice, description, quantity, status, barcode, supplierId }: 
+            { name: string, price: number, costPrice: number, description: string, quantity: number, status: number, barcode: string|undefined, supplierId: number}  = req.body;
             
-            const account = {name, username, email, password, role} as UserCreationAttributes;
+            const product = { name, price, costPrice, description, quantity, status, barcode } as ProductCreationAttributes;
 
-            const createdAccount = await this.userService.create(account);
+            const createdProduct = await this.productService.create(product);
             
-            let response = new EntityResponse(createdAccount, req.url);
+            let response = new EntityResponse(createdProduct, req.url);
             
-            let status = HttpStatus.SUCCESS;
+            let responseStatus = HttpStatus.SUCCESS;
             
-            return res.status(status).send(response);
+            return res.status(responseStatus).send(response);
         }
         catch(error){
             let status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -45,18 +46,15 @@ export default class UserController {
     
     public getAll = async(req: Request, res: Response) : Promise<Response> => {
         try{
-            console.log('Call get all');
+            const products = await this.productService.getAll();
             
-            const createdAccount = await this.userService.getAll();
-            
-            let response = new EntityCollectionResponse(createdAccount, req.url);
+            let response = new EntityCollectionResponse(products, req.url);
             
             let status = HttpStatus.SUCCESS;
             
             return res.status(status).send(response);
         }
         catch(error){
-            console.log(error);
             let status = HttpStatus.INTERNAL_SERVER_ERROR;
             let errorResponse = new ErrorResponse(req.url);
             
@@ -73,13 +71,13 @@ export default class UserController {
         try{
             let { id } = req.params;
             
-            const account = await this.userService.getById(+id);
+            const product = await this.productService.getById(+id);
             
-            if(account == null){
+            if(product == null){
                 throw new DataNotFoundException();
             }
 
-            let response = new EntityResponse(account, req.url);
+            let response = new EntityResponse(product, req.url);
             
             let status = HttpStatus.SUCCESS;
             

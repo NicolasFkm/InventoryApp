@@ -1,15 +1,14 @@
-import {initSequelize} from '@helpers/database/sequelize';
 import { Optional, HasManyAddAssociationMixin, Model, Association, HasManyGetAssociationsMixin, DataTypes, Sequelize } from "sequelize";
 import { Product } from "./Product";
 
-export interface ProductAttributes {
+export interface CategoryAttributes {
 	id: number;
 	name: string;
 }
 
-export interface ProductCreationAttributes extends Optional<ProductAttributes, "id"> { }
+export interface CategoryCreationAttributes extends Optional<CategoryAttributes, "id"> { }
 
-export class Category extends Model<ProductAttributes, ProductCreationAttributes>{
+export class Category extends Model<CategoryAttributes, CategoryCreationAttributes>{
     public id!: number;
     public name!: string;
 

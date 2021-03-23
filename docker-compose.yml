@@ -1,13 +1,13 @@
 version: '3'
 
 services:
-  chat_app:
+  mix-management:
     build:
       context: .
       dockerfile: docker/Dockerfile.nodejs
     command: nodemon --legacy-watch src/app.ts
-    image: chat_app
-    container_name: chat_app
+    image: mix-management
+    container_name: mix-management
     restart: unless-stopped
     env_file: .env
     environment:
@@ -17,7 +17,6 @@ services:
       - DB_PASSWORD=$DATABASE_PASSWORD
       - DB_ROOT_PASSWORD=$DATABASE_ROOT_PASSWORD
       - DB_PORT=$DATABASE_PORT
-      - WAIT_HOSTS=chat_db:3306
       - WAIT_HOSTS_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=30
       - WAIT_HOST_CONNECT_TIMEOUT=30

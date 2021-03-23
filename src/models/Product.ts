@@ -1,18 +1,19 @@
-import { initSequelize } from "@helpers/database/sequelize";
-import { Association, DataTypes, HasManyAddAssociationMixin, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, Model, Optional, Sequelize } from "sequelize";
+import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, Model, Optional, Sequelize } from "sequelize";
 import { ProductStatus } from "@enumerators/ProductStatus";
 import { Category } from "./Category";
 import { Order } from "./Order";
 import { OrderProduct } from "./OrderProduct";
 import { Supplier } from "./Supplier";
+import { Purchase } from "./Purchase";
+import { PurchaseProduct } from "./PurchaseProduct";
 
 export interface ProductAttributes {
 	id: number;
 	name: string;
-    barcode: string;
+    barcode?: string;
     price: number;
     costPrice: number;
-    description: string;
+    description?: string;
     quantity: number;
     status?: ProductStatus;
 }
@@ -23,7 +24,7 @@ export class Product extends Model<ProductAttributes, ProductCreationAttributes>
     public id!: number;
     public name!: string;
 
-    public barcode: string;
+    public barcode?: string;
     public price: number;
     public costPrice: number;
     public description: string;
@@ -34,16 +35,19 @@ export class Product extends Model<ProductAttributes, ProductCreationAttributes>
     public category?: Category;
     public supplier?: Supplier;
     public orders?: Order[];
+    public purchases?: Purchase[];
 
     public addCategory!: HasOneCreateAssociationMixin<Category>;
     public getCategory!: HasOneGetAssociationMixin<Category>;
     public addSupplier!: HasOneCreateAssociationMixin<Supplier>;
     public getSupplier!: HasOneGetAssociationMixin<Supplier>;
+    public getPurchases!: HasManyGetAssociationsMixin<Purchase>;
 
     public static associations: {
 		orders: Association<Order, Product>,
 		category: Association<Category, Product>,
 		supplier: Association<Supplier, Product>,
+		purchases: Association<Purchase, Product>,
 	};
 }
 
@@ -63,7 +67,7 @@ export const initProduct = (sequelize: Sequelize) => {
             },
             barcode: {
                 type: DataTypes.STRING,
-                allowNull: false,
+                allowNull: true,
                 unique: true
             },
             price: {
@@ -73,7 +77,8 @@ export const initProduct = (sequelize: Sequelize) => {
                 type: DataTypes.DECIMAL
             },
             description: {
-                type: DataTypes.TEXT
+                type: DataTypes.TEXT,
+                allowNull: true
             },
             status: {
                 type: DataTypes.ENUM({ values: Object.keys(ProductStatus) })
@@ -90,6 +95,7 @@ export const initProduct = (sequelize: Sequelize) => {
 
 export const associateProduct = () => {
 	Product.belongsToMany(Order, {through: typeof OrderProduct});
+	Product.belongsToMany(Purchase, {through: typeof PurchaseProduct});
 	Product.belongsTo(Category);
 	Product.belongsTo(Supplier);
 };

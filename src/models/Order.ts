@@ -1,7 +1,4 @@
-import { initSequelize } from "@helpers/database/sequelize";
-import { ProductStatus } from "@enumerators/ProductStatus";
 import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, Model, Optional, Sequelize } from "sequelize";
-import { PaymentType } from "@enumerators/PaymentType";
 import { Coupon } from "./Coupon";
 import { OrderProduct } from "./OrderProduct";
 import { Payment } from "./Payment";
@@ -13,7 +10,7 @@ export interface OrderAttributes {
     coupon?: Coupon;
     user?: User;
     payments?: Payment[];
-    products?: OrderProduct[];
+    products?: Product[];
 }
 
 export interface OrderCreationAttributes extends Optional<OrderAttributes, "id"> { }
@@ -24,10 +21,10 @@ export class Order extends Model<OrderAttributes, OrderCreationAttributes>{
     public coupon?: Coupon;
     public user?: User;
     public payments?: Payment[];
-    public products?: OrderProduct[];
+    public products?: Product[];
 
-    public addOrderProduct!: HasManyAddAssociationMixin<OrderProduct, number>;
-    public getOrderProducts!: HasManyGetAssociationsMixin<OrderProduct>;
+    public addProduct!: HasManyAddAssociationMixin<Product, number>;
+    public getProducts!: HasManyGetAssociationsMixin<Product>;
     public applyCoupon!: HasOneCreateAssociationMixin<Coupon>;
     public getCoupon!: HasOneGetAssociationMixin<Coupon>;
     public addPayment!: HasManyAddAssociationMixin<Payment, number>;

@@ -1,34 +1,34 @@
 import { HttpStatus } from '@enumerators/HttpStatus';
 import { DataNotFoundException } from '@helpers/errors/DataNotFoundException';
 import { InvalidArgumentException } from '@helpers/errors/InvalidArgumentException';
-import { UserCreationAttributes } from '@models/User';
+import { CategoryCreationAttributes } from '@models/Category';
 import EntityCollectionResponse from '@models/responses/EntityCollectionResponse';
 import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
-import UserService from '@services/UserService';
+import CategoryService from '@services/CategoryService';
 import { Response, Request } from 'express';
 
-export default class UserController {
+export default class CategoryController {
 
-    public userService: UserService;
+    public categoryService: CategoryService;
 
     constructor(){
-        this.userService = new UserService();;
+        this.categoryService = new CategoryService();;
     }
 
     public postCreate = async(req: Request, res: Response) : Promise<Response> => {
         try{
-            let { name, username, email, password, role }: { name: string, username: string, email: string, password: string, role: number}  = req.body;
+            let { name }: { name: string}  = req.body;
             
-            const account = {name, username, email, password, role} as UserCreationAttributes;
+            const category = { name } as CategoryCreationAttributes;
 
-            const createdAccount = await this.userService.create(account);
+            const createdCategory = await this.categoryService.create(category);
             
-            let response = new EntityResponse(createdAccount, req.url);
+            let response = new EntityResponse(createdCategory, req.url);
             
-            let status = HttpStatus.SUCCESS;
+            let responseStatus = HttpStatus.SUCCESS;
             
-            return res.status(status).send(response);
+            return res.status(responseStatus).send(response);
         }
         catch(error){
             let status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -45,18 +45,15 @@ export default class UserController {
     
     public getAll = async(req: Request, res: Response) : Promise<Response> => {
         try{
-            console.log('Call get all');
+            const categorys = await this.categoryService.getAll();
             
-            const createdAccount = await this.userService.getAll();
-            
-            let response = new EntityCollectionResponse(createdAccount, req.url);
+            let response = new EntityCollectionResponse(categorys, req.url);
             
             let status = HttpStatus.SUCCESS;
             
             return res.status(status).send(response);
         }
         catch(error){
-            console.log(error);
             let status = HttpStatus.INTERNAL_SERVER_ERROR;
             let errorResponse = new ErrorResponse(req.url);
             
@@ -73,13 +70,13 @@ export default class UserController {
         try{
             let { id } = req.params;
             
-            const account = await this.userService.getById(+id);
+            const category = await this.categoryService.getById(+id);
             
-            if(account == null){
+            if(category == null){
                 throw new DataNotFoundException();
             }
 
-            let response = new EntityResponse(account, req.url);
+            let response = new EntityResponse(category, req.url);
             
             let status = HttpStatus.SUCCESS;
             

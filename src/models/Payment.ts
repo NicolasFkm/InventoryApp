@@ -1,10 +1,10 @@
-import { initSequelize } from "@helpers/database/sequelize";
 import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, Model, Optional, Sequelize } from "sequelize";
 import { PaymentType } from "@enumerators/PaymentType";
 import { Order } from "./Order";
 
 export interface PaymentAttributes {
 	id: number;
+	value: number;
     type: PaymentType;
     installments?: number;
 }
@@ -12,8 +12,9 @@ export interface PaymentAttributes {
 export interface PaymentCreationAttributes extends Optional<PaymentAttributes, "id"> { }
 
 export class Payment extends Model<PaymentAttributes, PaymentCreationAttributes>{
-    public id!: number;
+	public id!: number;
     public installments?: number;
+	public value: number;
     
     public type: PaymentType;
     
@@ -33,6 +34,9 @@ export const initPayment = (sequelize: Sequelize) => {
 				type: DataTypes.INTEGER.UNSIGNED,
 				autoIncrement: true,
 				primaryKey: true
+			},
+			value:{
+				type: DataTypes.DECIMAL
 			},
             type: {
                 type: DataTypes.ENUM({ values: Object.keys(PaymentType) })

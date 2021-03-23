@@ -1,4 +1,3 @@
-import { initSequelize } from "@helpers/database/sequelize";
 import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, Model, Optional, Sequelize } from "sequelize";
 import { Role } from "@enumerators/Role";
 import { Order } from "./Order";

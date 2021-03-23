@@ -8,6 +8,20 @@ export default class UserRepository {
         return user;
     }
 
+    async getByEmail(email: string): Promise<User | null> {
+        const user = await User.findOne(
+            { 
+                where:{
+                    email
+                }, 
+                include: [{ 
+                    all: true 
+                }] 
+            });
+
+        return user;
+    }
+
     async getAll(): Promise<User[]> {
         const user = await User.findAll({ include: [{ all: true }] });
 
