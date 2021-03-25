@@ -1,6 +1,7 @@
 import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, Model, Optional, Sequelize } from "sequelize";
 import { PaymentType } from "@enumerators/PaymentType";
 import { Order } from "./Order";
+import { Purchase } from "./Purchase";
 
 export interface PaymentAttributes {
 	id: number;
@@ -19,11 +20,14 @@ export class Payment extends Model<PaymentAttributes, PaymentCreationAttributes>
     public type: PaymentType;
     
     public order?: Order;
+    public purchase?: Purchase;
 
     public getOrder!: HasOneGetAssociationMixin<Order>;
+    public getPurchase!: HasOneGetAssociationMixin<Purchase>;
 
     public static associations: {
-		order: Association<Order, Payment>
+		order: Association<Order, Payment>,
+		purchase: Association<Purchase, Payment>,
 	};
 }
 
@@ -55,5 +59,6 @@ export const initPayment = (sequelize: Sequelize) => {
 }
 
 export const associatePayment = () => {
-	Payment.belongsTo(Order);
+    Payment.belongsTo(Purchase);
+    Payment.belongsTo(Order);
 };

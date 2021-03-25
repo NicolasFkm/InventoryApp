@@ -1,4 +1,4 @@
-import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, Model, Optional, Sequelize } from "sequelize";
+import { Association, DataTypes, HasManyAddAssociationMixin, HasManyCountAssociationsMixin, HasManyGetAssociationsMixin, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, Model, Optional, Sequelize } from "sequelize";
 import { ProductStatus } from "@enumerators/ProductStatus";
 import { Category } from "./Category";
 import { Order } from "./Order";
@@ -16,11 +16,12 @@ export interface ProductAttributes {
     description?: string;
     quantity: number;
     status?: ProductStatus;
+
 }
 
 export interface ProductCreationAttributes extends Optional<ProductAttributes, "id"> { }
 
-export class Product extends Model<ProductAttributes, ProductCreationAttributes>{
+export class Product extends Model{
     public id!: number;
     public name!: string;
 
@@ -34,13 +35,12 @@ export class Product extends Model<ProductAttributes, ProductCreationAttributes>
     
     public category?: Category;
     public supplier?: Supplier;
-    public orders?: Order[];
     public purchases?: Purchase[];
+    public orders?: Order[];
 
     public getCategory!: HasOneGetAssociationMixin<Category>;
     public getSupplier!: HasOneGetAssociationMixin<Supplier>;
     public getPurchases!: HasManyGetAssociationsMixin<Purchase>;
-    public getOrders!: HasManyGetAssociationsMixin<Order>;
 
     public static associations: {
 		orders: Association<Order, Product>,

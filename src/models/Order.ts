@@ -60,7 +60,7 @@ export const initOrder = (sequelize: Sequelize) => {
 
 export const associateOrder = () => {
 	Order.belongsTo(Coupon);
-    Order.hasMany(Payment);
     Order.belongsTo(User);
+    Order.hasMany(Payment);
     Order.belongsToMany(Product, {through: typeof OrderProduct});
 };

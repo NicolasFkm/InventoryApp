@@ -3,7 +3,7 @@ import { Payment, PaymentCreationAttributes } from "@models/Payment";
 export default class PaymentRepository {
 
     async getById(id: number): Promise<Payment | null> {
-        const payment = await Payment.findByPk(id, { include: [{ all: true }] });
+        const payment = await Payment.findByPk(id);
 
         return payment;
     }

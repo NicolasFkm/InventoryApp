@@ -5,7 +5,7 @@ import { Supplier } from "@models/Supplier";
 export default class ProductRepository {
 
     async getById(id: number): Promise<Product | null> {
-        const product = await Product.findByPk(id, { include: [{ all: true }] });
+        const product = await Product.findByPk(id, { include: [Supplier, Category] });
 
         return product;
     }

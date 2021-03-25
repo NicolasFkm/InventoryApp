@@ -24,7 +24,7 @@ export default class ProductController {
             let { name, price, costPrice, description, quantity, status, barcode, supplierId }: 
             { name: string, price: number, costPrice: number, description: string|undefined, quantity: number, status: number, barcode: string|undefined, supplierId: number|undefined}  = req.body;
             
-            const product = { name, price, costPrice, description, quantity, status, barcode } as ProductCreationAttributes;
+            const product = { name, price, costPrice, description, quantity, status, barcode, orders: [], purchases: [] } as ProductCreationAttributes;
 
             const createdProduct = await this.productService.create(product);
             

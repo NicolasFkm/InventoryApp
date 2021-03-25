@@ -1,4 +1,4 @@
-import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, Model, Optional, Sequelize } from "sequelize";
+import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, Model, Optional, Sequelize } from "sequelize";
 import { PurchaseProduct } from "./PurchaseProduct";
 import { Payment } from "./Payment";
 import { Product } from "./Product";
@@ -20,12 +20,7 @@ export class Purchase extends Model<PurchaseAttributes, PurchaseCreationAttribut
     public addProduct!: HasManyAddAssociationMixin<Product, number>;
     public getProducts!: HasManyGetAssociationsMixin<Product>;
     public addPayment!: HasManyAddAssociationMixin<Payment, number>;
-    public getPayments!: HasManyGetAssociationsMixin<Payment>;
-
-    public static associations: {
-		products: Association<Product, Purchase>,
-		payment: Association<Payment, Purchase>
-	};
+    public getPayment!: HasManyGetAssociationsMixin<Payment>;
 }
 
 export const initPurchase = (sequelize: Sequelize) => {

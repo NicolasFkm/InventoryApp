@@ -13,14 +13,16 @@ export default class PaymentController {
     public paymentService: PaymentService;
 
     constructor(){
-        this.paymentService = new PaymentService();;
+        this.paymentService = new PaymentService();
     }
 
     public postCreate = async(req: Request, res: Response) : Promise<Response> => {
         try{
-            let { type, installments }: { type: number, installments: number|undefined }  = req.body;
+            let { type, installments, value }: { type: number, installments: number|undefined, value: number }  = req.body;
             
-            const payment = { type, installments } as PaymentCreationAttributes;
+            if(installments == 0 || installments == undefined) installments = 1;
+
+            const payment = { type, installments, value } as PaymentCreationAttributes;
 
             const createdPayment = await this.paymentService.create(payment);
             

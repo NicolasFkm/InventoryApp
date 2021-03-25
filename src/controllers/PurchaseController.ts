@@ -24,19 +24,25 @@ export default class PurchaseController {
 
     public postCreate = async (req: Request, res: Response): Promise<Response> => {
         try {
-            let { productIds, paymentsIds }: { productIds: number[], paymentsIds: number[] } = req.body;
+            let { productIds, paymentIds }: { productIds: number[], paymentIds: number[] } = req.body;
 
-            let payments = await Promise.all(paymentsIds.map(async (id) => await this.paymentService.getById(id)));
-
-            const purchase = { payments } as PurchaseCreationAttributes;
-
+            
+            const purchase = { } as PurchaseCreationAttributes;
+            
             const createdPurchase = await this.purchaseService.create(purchase);
-
+            
             let products = await Promise.all(productIds.map(async (id) => {
                 const product = await this.productService.getById(id);
                 if(product != null) createdPurchase.addProduct(product!);
 
                 return product;
+            }));
+            
+            let payments = await Promise.all(paymentIds.map(async (id) => {
+                const payment = await this.paymentService.getById(id);
+                if(payment != null) createdPurchase.addPayment(payment);
+
+                return payment;
             }));
 
             let response = new EntityResponse(createdPurchase, req.url);
