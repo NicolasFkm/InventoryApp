@@ -15,11 +15,11 @@ export class PurchaseProduct extends Model<PurchaseProductAttributes, PurchasePr
     public quantity: number;
 
     public product!: Product;
-    public order!: Purchase;
+    public purchase!: Purchase;
 
     public static associations: {
         product: Association<Product, PurchaseProduct>,
-        order: Association<Purchase, PurchaseProduct>
+        purchase: Association<Purchase, PurchaseProduct>
     }
 }
 

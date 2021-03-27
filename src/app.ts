@@ -3,7 +3,7 @@ import bodyParser from "body-parser";
 import helmet from 'helmet';
 import { Routes } from '@routes/Routes';
 
-class App {
+export default class App {
     public app: express.Application;
     public router: Routes;
 
@@ -20,5 +20,3 @@ class App {
         this.app.use(helmet());
     }
 }
-
-export default new App().app;
