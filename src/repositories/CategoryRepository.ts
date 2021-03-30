@@ -1,28 +1,29 @@
-import { Category, CategoryCreationAttributes } from "@models/Category";
+import Category, { ICategory } from "@models/Category";
 
 export default class CategoryRepository {
 
-    async getById(id: number): Promise<Category | null> {
-        const category = await Category.findByPk(id, { include: [{ all: true }] });
+    async getById(id: number): Promise<ICategory | null> {
+        const category = await Category.findById(id)
+            .populate("products")
 
         return category;
     }
 
-    async getAll(): Promise<Category[]> {
-        const category = await Category.findAll({ include: [{ all: true }] });
+    async getAll(): Promise<ICategory[]> {
+        const category = await Category.find()
 
         return category;
     }
 
-    async add(category: CategoryCreationAttributes): Promise<Category> {
+    async add(category: ICategory): Promise<ICategory> {
 
         const createdCategory = await Category.create(category);
 
         return createdCategory;
     }
 
-    async update(Category: Category, updateData: Partial<CategoryCreationAttributes>): Promise<Category | undefined> {
-        const updatedCategory = await Category?.update(updateData)
+    async update(category: ICategory, updateData: Partial<ICategory>): Promise<ICategory | undefined> {
+        const updatedCategory = await category?.update(updateData)
 
         return updatedCategory;
     }

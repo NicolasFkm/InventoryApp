@@ -1,5 +1,5 @@
 import { InvalidArgumentException } from "@helpers/errors/InvalidArgumentException";
-import { Category, CategoryAttributes, CategoryCreationAttributes } from "@models/Category";
+import { ICategory } from "@models/Category";
 import CategoryRepository from "@repositories/CategoryRepository";
 import validator from 'validator';
 
@@ -11,19 +11,19 @@ export default class CategoryService {
         this.categoryRepository = new CategoryRepository();
     }
 
-    async getById(id: number): Promise<Category | null> {
+    async getById(id: number): Promise<ICategory | null> {
         const category = await this.categoryRepository.getById(id);
 
         return category;
     }
 
-    async getAll(): Promise<Category[]> {
+    async getAll(): Promise<ICategory[]> {
         const category = await this.categoryRepository.getAll();
 
         return category;
     }
 
-    async create(category: CategoryCreationAttributes): Promise<Category> {
+    async create(category: ICategory): Promise<ICategory> {
 
         this.validate(category);
 
@@ -32,14 +32,14 @@ export default class CategoryService {
         return createdCategory;
     }
 
-    async update(id: number, updateData: Partial<CategoryCreationAttributes>): Promise<Category|undefined> {        
-        const category = await Category.findByPk(id, { include: [{ all: true }] });
+    async update(id: number, updateData: Partial<ICategory>): Promise<ICategory|undefined> {        
+        const category = await this.categoryRepository.getById(id);
         
         if(category == null) {
             throw new InvalidArgumentException("Invalid category identifier.");
         }
 
-        let categoryData: CategoryCreationAttributes = {...category, ...updateData} as CategoryCreationAttributes;
+        let categoryData: ICategory = {...category, ...updateData} as ICategory;
         
         this.validate(categoryData);
 
@@ -48,7 +48,7 @@ export default class CategoryService {
         return updatedCategory;
     }
 
-    validate(category: CategoryCreationAttributes|CategoryAttributes): void{
+    validate(category: ICategory): void{
         if(validator.isEmpty(category.name!))
             throw new InvalidArgumentException("Category name is invalid.");
     }

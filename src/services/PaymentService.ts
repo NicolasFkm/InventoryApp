@@ -1,5 +1,5 @@
 import { InvalidArgumentException } from "@helpers/errors/InvalidArgumentException";
-import { Payment, PaymentAttributes, PaymentCreationAttributes } from "@models/Payment";
+import { IPayment } from "@models/Payment";
 import PaymentRepository from "@repositories/PaymentRepository";
 
 export default class PaymentService {
@@ -10,19 +10,19 @@ export default class PaymentService {
         this.paymentRepository = new PaymentRepository();
     }
 
-    async getById(id: number): Promise<Payment | null> {
+    async getById(id: number): Promise<IPayment | null> {
         const payment = await this.paymentRepository.getById(id);
 
         return payment;
     }
 
-    async getAll(): Promise<Payment[]> {
+    async getAll(): Promise<IPayment[]> {
         const payment = await this.paymentRepository.getAll();
 
         return payment;
     }
 
-    async create(payment: PaymentCreationAttributes): Promise<Payment> {
+    async create(payment: IPayment): Promise<IPayment> {
 
         this.validate(payment);
 
@@ -31,14 +31,14 @@ export default class PaymentService {
         return createdPayment;
     }
 
-    async update(id: number, updateData: Partial<PaymentCreationAttributes>): Promise<Payment|undefined> {        
-        const payment = await Payment.findByPk(id, { include: [{ all: true }] });
+    async update(id: number, updateData: Partial<IPayment>): Promise<IPayment|undefined> {        
+        const payment = await this.paymentRepository.getById(id);
         
         if(payment == null) {
             throw new InvalidArgumentException("Invalid payment identifier.");
         }
 
-        let paymentData: PaymentCreationAttributes = {...payment, ...updateData} as PaymentCreationAttributes;
+        let paymentData: IPayment = {...payment, ...updateData} as IPayment;
         
         this.validate(paymentData);
 
@@ -47,7 +47,7 @@ export default class PaymentService {
         return updatedPayment;
     }
 
-    validate(payment: PaymentCreationAttributes|PaymentAttributes): void{
+    validate(payment: IPayment): void{
         if(payment.value <= 0)
             throw new InvalidArgumentException("Payment amount invalid.");
     }

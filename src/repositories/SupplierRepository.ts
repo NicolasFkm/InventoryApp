@@ -1,28 +1,29 @@
-import { Supplier, SupplierCreationAttributes } from "@models/Supplier";
+import Supplier, { ISupplier } from "@models/Supplier";
 
 export default class SupplierRepository {
 
-    async getById(id: number): Promise<Supplier | null> {
-        const supplier = await Supplier.findByPk(id, { include: [{ all: true }] });
+    async getById(id: number): Promise<ISupplier | null> {
+        const supplier = await Supplier.findById(id)
+            .populate("products");
 
         return supplier;
     }
 
-    async getAll(): Promise<Supplier[]> {
-        const supplier = await Supplier.findAll({ include: [{ all: true }] });
+    async getAll(): Promise<ISupplier[]> {
+        const supplier = await Supplier.find();
 
         return supplier;
     }
 
-    async add(supplier: SupplierCreationAttributes): Promise<Supplier> {
+    async add(supplier: ISupplier): Promise<ISupplier> {
 
         const createdSupplier = await Supplier.create(supplier);
 
         return createdSupplier;
     }
 
-    async update(Supplier: Supplier, updateData: Partial<SupplierCreationAttributes>): Promise<Supplier | undefined> {
-        const updatedSupplier = await Supplier?.update(updateData)
+    async update(supplier: ISupplier, updateData: Partial<ISupplier>): Promise<ISupplier | undefined> {
+        const updatedSupplier = await supplier?.update(updateData)
 
         return updatedSupplier;
     }

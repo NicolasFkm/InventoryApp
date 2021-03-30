@@ -1,60 +1,35 @@
-import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, Model, Optional, Sequelize } from "sequelize";
 import { CouponType } from "@enumerators/CouponType";
-import { Order } from "./Order";
+import { IOrder } from "./Order";
+import mongoose, { Schema, Document } from 'mongoose';
 
-export interface CouponAttributes {
-	id: number;
+export interface ICoupon extends Document {
     code: string;
     type: CouponType;
     value: number;
+	orders: IOrder[];
 }
 
-export interface CouponCreationAttributes extends Optional<CouponAttributes, "id"> { }
+const couponSchema = new Schema({
+	code: {
+        type: String,
+        required: true
+    },
+	type: {
+		type: Number,
+		min: 0,
+		max: 3,
+		default: 0
+	},
+	value: {
+		type: Number,
+		required: true
+	},
+	orders: [{
+		type: Schema.Types.ObjectId,
+		ref: "Order"
+	}]
+},  {
+	timestamps: { createdAt: true, updatedAt: true }
+})
 
-export class Coupon extends Model<CouponAttributes, CouponCreationAttributes>{
-    public id!: number;
-    public code: string;
-    public value: number;
-    
-    public type: CouponType;
-
-    public orders?: Order[];
-
-    public addOrder!: HasManyAddAssociationMixin<Order, number>;
-    public getOrder!: HasManyGetAssociationsMixin<Order>;
-
-    public static associations: {
-		order: Association<Order, Coupon>
-	};
-}
-
-export const initCoupon = (sequelize: Sequelize) => {
-	Coupon.init(
-		{
-			id: {
-				type: DataTypes.INTEGER.UNSIGNED,
-				autoIncrement: true,
-				primaryKey: true
-			},
-			code: {
-                type: DataTypes.STRING
-            },
-            type: {
-                type: DataTypes.ENUM({ values: Object.keys(CouponType) })
-            },
-            value: {
-                type: DataTypes.DECIMAL
-            }
-		},
-		{
-			tableName: "Coupon",
-			timestamps: false,
-      		paranoid: true,
-			sequelize: sequelize
-		}
-	);
-}
-
-export const associateCoupon = () => {
-	Coupon.hasMany(Order);
-};
+export default mongoose.model<ICoupon>('Coupon', couponSchema);

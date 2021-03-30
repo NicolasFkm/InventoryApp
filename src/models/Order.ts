@@ -1,66 +1,35 @@
-import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, Model, Optional, Sequelize } from "sequelize";
-import { Coupon } from "./Coupon";
-import { OrderProduct } from "./OrderProduct";
-import { Payment } from "./Payment";
-import { Product } from "./Product";
-import { User } from "./User";
+import { ICoupon } from "./Coupon";
+import { IPayment } from "./Payment";
+import { IUser } from "./User";
+import mongoose, { Schema, Document } from 'mongoose';
+import { ICartItem } from "./CartItem";
 
-export interface OrderAttributes {
-	id: number;
-    coupon?: Coupon;
-    user?: User;
-    payments?: Payment[];
-    products?: Product[];
+export interface IOrder extends Document {
+    coupon?: ICoupon;
+    user?: IUser;
+    payments?: IPayment[];
+    items?: ICartItem[];
 }
 
-export interface OrderCreationAttributes extends Optional<OrderAttributes, "id"> { }
+const orderSchema = new Schema({
+	coupon: {
+		type: Schema.Types.ObjectId,
+        ref: "Coupon"
+	},
+	user: {
+		type: Schema.Types.ObjectId,
+        ref: "User"
+	},
+	payments: [{
+		type: Schema.Types.ObjectId,
+        ref: "Payment"
+	}],
+	items: [{
+		type: Schema.Types.ObjectId,
+        ref: "CartItem"
+	}]
+},  {
+	timestamps: { createdAt: true, updatedAt: true }
+})
 
-export class Order extends Model<OrderAttributes, OrderCreationAttributes>{
-    public id!: number;
-
-    public coupon?: Coupon;
-    public user?: User;
-    public payments?: Payment[];
-    public products?: Product[];
-
-    public addProduct!: HasManyAddAssociationMixin<Product, number>;
-    public getProducts!: HasManyGetAssociationsMixin<Product>;
-    public applyCoupon!: HasOneCreateAssociationMixin<Coupon>;
-    public getCoupon!: HasOneGetAssociationMixin<Coupon>;
-    public addPayment!: HasManyAddAssociationMixin<Payment, number>;
-    public getPayments!: HasManyGetAssociationsMixin<Payment>;
-    public addUser!: HasOneCreateAssociationMixin<User>;
-    public getUser!: HasOneGetAssociationMixin<User>;
-
-    public static associations: {
-		coupon: Association<Coupon, Order>,
-		products: Association<Product, Order>,
-		user: Association<User, Order>,
-		payment: Association<Payment, Order>
-	};
-}
-
-export const initOrder = (sequelize: Sequelize) => {
-	Order.init(
-		{
-			id: {
-				type: DataTypes.INTEGER.UNSIGNED,
-				autoIncrement: true,
-				primaryKey: true
-			}
-		},
-		{
-			tableName: "Order",
-			timestamps: false,
-      		paranoid: true,
-			sequelize: sequelize
-		}
-	);
-}
-
-export const associateOrder = () => {
-	Order.belongsTo(Coupon);
-    Order.belongsTo(User);
-    Order.hasMany(Payment);
-    Order.belongsToMany(Product, {through: typeof OrderProduct});
-};
+export default mongoose.model<IOrder>('Order', orderSchema);

@@ -1,64 +1,39 @@
-import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, Model, Optional, Sequelize } from "sequelize";
 import { PaymentType } from "@enumerators/PaymentType";
-import { Order } from "./Order";
-import { Purchase } from "./Purchase";
+import { IOrder } from "./Order";
+import { IPurchase } from "./Purchase";
+import mongoose, { Schema, Document } from 'mongoose';
 
-export interface PaymentAttributes {
-	id: number;
+export interface IPayment extends Document {
 	value: number;
     type: PaymentType;
     installments?: number;
+	order?: IOrder;
+	purchase?: IPurchase;
 }
 
-export interface PaymentCreationAttributes extends Optional<PaymentAttributes, "id"> { }
+const paymentSchema = new Schema({
+	value: {
+		type: Number
+	},
+	type: {
+		type: Number,
+		min: 0,
+		max: 3,
+		default: 0
+	},
+	installments: {
+		type: Number
+	},
+	order: {
+		type: Schema.Types.ObjectId,
+		ref: "Order"
+	},
+	purchase: {
+		type: Schema.Types.ObjectId,
+		ref: "Purchase"
+	}
+},  {
+	timestamps: { createdAt: true, updatedAt: true }
+})
 
-export class Payment extends Model<PaymentAttributes, PaymentCreationAttributes>{
-	public id!: number;
-    public installments?: number;
-	public value: number;
-    
-    public type: PaymentType;
-    
-    public order?: Order;
-    public purchase?: Purchase;
-
-    public getOrder!: HasOneGetAssociationMixin<Order>;
-    public getPurchase!: HasOneGetAssociationMixin<Purchase>;
-
-    public static associations: {
-		order: Association<Order, Payment>,
-		purchase: Association<Purchase, Payment>,
-	};
-}
-
-export const initPayment = (sequelize: Sequelize) => {
-	Payment.init(
-		{
-			id: {
-				type: DataTypes.INTEGER.UNSIGNED,
-				autoIncrement: true,
-				primaryKey: true
-			},
-			value:{
-				type: DataTypes.DECIMAL
-			},
-            type: {
-                type: DataTypes.ENUM({ values: Object.keys(PaymentType) })
-            },
-            installments: {
-                type: DataTypes.INTEGER
-            }
-		},
-		{
-			tableName: "Payment",
-			timestamps: false,
-      		paranoid: true,
-			sequelize: sequelize
-		}
-	);
-}
-
-export const associatePayment = () => {
-    Payment.belongsTo(Purchase);
-    Payment.belongsTo(Order);
-};
+export default mongoose.model<IPayment>('Payment', paymentSchema);

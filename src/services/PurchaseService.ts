@@ -1,5 +1,5 @@
 import { InvalidArgumentException } from "@helpers/errors/InvalidArgumentException";
-import { Purchase, PurchaseAttributes, PurchaseCreationAttributes } from "@models/Purchase";
+import { IPurchase } from "@models/Purchase";
 import PurchaseRepository from "@repositories/PurchaseRepository";
 
 export default class PurchaseService {
@@ -10,19 +10,19 @@ export default class PurchaseService {
         this.purchaseRepository = new PurchaseRepository();
     }
 
-    async getById(id: number): Promise<Purchase | null> {
+    async getById(id: number): Promise<IPurchase | null> {
         const purchase = await this.purchaseRepository.getById(id);
 
         return purchase;
     }
 
-    async getAll(): Promise<Purchase[]> {
+    async getAll(): Promise<IPurchase[]> {
         const purchase = await this.purchaseRepository.getAll();
 
         return purchase;
     }
 
-    async create(purchase: PurchaseCreationAttributes): Promise<Purchase> {
+    async create(purchase: IPurchase): Promise<IPurchase> {
 
         this.validate(purchase);
 
@@ -31,14 +31,14 @@ export default class PurchaseService {
         return createdPurchase;
     }
 
-    async update(id: number, updateData: Partial<PurchaseCreationAttributes>): Promise<Purchase|undefined> {        
-        const purchase = await Purchase.findByPk(id, { include: [{ all: true }] });
+    async update(id: number, updateData: Partial<IPurchase>): Promise<IPurchase|undefined> {        
+        const purchase = await this.purchaseRepository.getById(id);
         
         if(purchase == null) {
             throw new InvalidArgumentException("Invalid purchase identifier.");
         }
 
-        let purchaseData: PurchaseCreationAttributes = {...purchase, ...updateData} as PurchaseCreationAttributes;
+        let purchaseData: IPurchase = {...purchase, ...updateData} as IPurchase;
         
         this.validate(purchaseData);
 
@@ -47,8 +47,8 @@ export default class PurchaseService {
         return updatedPurchase;
     }
 
-    validate(purchase: PurchaseCreationAttributes|PurchaseAttributes): void{
-        if(purchase.products?.length == 0)
+    validate(purchase: IPurchase): void{
+        if(purchase.items?.length == 0)
             throw new InvalidArgumentException("Purchase products invalid.");
     }
 

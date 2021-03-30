@@ -1,6 +1,6 @@
 import { Role } from "@enumerators/Role";
 import { InvalidArgumentException } from "@helpers/errors/InvalidArgumentException";
-import { User, UserAttributes, UserCreationAttributes } from "@models/User";
+import { IUser } from "@models/User";
 import UserRepository from "@repositories/UserRepository";
 import validator from 'validator';
 import bcrypt from 'bcrypt';
@@ -14,19 +14,19 @@ export default class UserService {
         this.userRepository = new UserRepository();
     }
 
-    async getById(id: number): Promise<User | null> {
+    async getById(id: number): Promise<IUser | null> {
         const user = await this.userRepository.getById(id);
 
         return user;
     }
 
-    async getAll(): Promise<User[]> {
+    async getAll(): Promise<IUser[]> {
         const user = await this.userRepository.getAll();
 
         return user;
     }
 
-    async create(user: UserCreationAttributes): Promise<User> {
+    async create(user: IUser): Promise<IUser> {
 
         this.validate(user);
 
@@ -37,14 +37,14 @@ export default class UserService {
         return createdUser;
     }
 
-    async update(id: number, updateData: Partial<UserCreationAttributes>): Promise<User|undefined> {        
-        const user = await User.findByPk(id, { include: [{ all: true }] });
+    async update(id: number, updateData: Partial<IUser>): Promise<IUser|undefined> {        
+        const user = await this.userRepository.getById(id);
         
         if(user == null) {
             throw new InvalidArgumentException("Invalid user identifier.");
         }
 
-        let userData: UserCreationAttributes = {...user, ...updateData} as UserCreationAttributes;
+        let userData: IUser = {...user, ...updateData} as IUser;
         
         this.validate(userData);
 
@@ -53,7 +53,7 @@ export default class UserService {
         return updatedUser;
     }
 
-    validate(user: UserCreationAttributes|UserAttributes): void{
+    validate(user: IUser): void{
         
         if(!validator.isEmail(user.email!))
             throw new InvalidArgumentException("E-mail invalid.");

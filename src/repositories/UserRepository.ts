@@ -1,42 +1,36 @@
-import { User, UserCreationAttributes } from "@models/User";
+import User, { IUser } from "@models/User";
 
 export default class UserRepository {
 
-    async getById(id: number): Promise<User | null> {
-        const user = await User.findByPk(id, { include: [{ all: true }] });
+    async getById(id: number): Promise<IUser | null> {
+        const user = await User.findById(id)
+            .populate("orders");
 
         return user;
     }
 
-    async getByEmail(email: string): Promise<User | null> {
+    async getByEmail(email: string): Promise<IUser | null> {
         const user = await User.findOne(
-            { 
-                where:{
-                    email
-                }, 
-                include: [{ 
-                    all: true 
-                }] 
-            });
+            { email });
 
         return user;
     }
 
-    async getAll(): Promise<User[]> {
-        const user = await User.findAll({ include: [{ all: true }] });
+    async getAll(): Promise<IUser[]> {
+        const user = await User.find();
 
         return user;
     }
 
-    async add(user: UserCreationAttributes): Promise<User> {
+    async add(user: IUser): Promise<IUser> {
 
         const createdUser = await User.create(user);
 
         return createdUser;
     }
 
-    async update(User: User, updateData: Partial<UserCreationAttributes>): Promise<User | undefined> {
-        const updatedUser = await User?.update(updateData)
+    async update(user: IUser, updateData: Partial<IUser>): Promise<IUser | undefined> {
+        const updatedUser = await user?.update(updateData)
 
         return updatedUser;
     }

@@ -1,5 +1,5 @@
 import { InvalidArgumentException } from "@helpers/errors/InvalidArgumentException";
-import { Product, ProductAttributes, ProductCreationAttributes } from "@models/Product";
+import { IProduct } from "@models/Product";
 import ProductRepository from "@repositories/ProductRepository";
 import validator from 'validator';
 
@@ -11,19 +11,19 @@ export default class ProductService {
         this.productRepository = new ProductRepository();
     }
 
-    async getById(id: number): Promise<Product | null> {
+    async getById(id: number): Promise<IProduct | null> {
         const product = await this.productRepository.getById(id);
 
         return product;
     }
 
-    async getAll(): Promise<Product[]> {
+    async getAll(): Promise<IProduct[]> {
         const product = await this.productRepository.getAll();
 
         return product;
     }
 
-    async create(product: ProductCreationAttributes): Promise<Product> {
+    async create(product: IProduct): Promise<IProduct> {
 
         this.validate(product);
 
@@ -32,14 +32,14 @@ export default class ProductService {
         return createdProduct;
     }
 
-    async update(id: number, updateData: Partial<ProductCreationAttributes>): Promise<Product|undefined> {        
-        const product = await Product.findByPk(id, { include: [{ all: true }] });
+    async update(id: number, updateData: Partial<IProduct>): Promise<IProduct|undefined> {        
+        const product = await this.productRepository.getById(id);
         
         if(product == null) {
             throw new InvalidArgumentException("Invalid product identifier.");
         }
 
-        let productData: ProductCreationAttributes = {...product, ...updateData} as ProductCreationAttributes;
+        let productData: IProduct = {...product, ...updateData} as IProduct;
         
         this.validate(productData);
 
@@ -48,7 +48,7 @@ export default class ProductService {
         return updatedProduct;
     }
 
-    validate(product: ProductCreationAttributes|ProductAttributes): void{
+    validate(product: IProduct): void{
         
         if(validator.isEmpty(product.name!))
             throw new InvalidArgumentException("Product name is invalid.");

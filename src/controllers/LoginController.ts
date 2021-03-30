@@ -1,9 +1,6 @@
 import { HttpStatus } from '@enumerators/HttpStatus';
 import { DataNotFoundException } from '@helpers/errors/DataNotFoundException';
 import { InvalidArgumentException } from '@helpers/errors/InvalidArgumentException';
-import { UserCreationAttributes } from '@models/User';
-import EntityCollectionResponse from '@models/responses/EntityCollectionResponse';
-import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
 import { Response, Request } from 'express';
 import LoginService from '@services/LoginService';
