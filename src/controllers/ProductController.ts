@@ -1,7 +1,7 @@
 import { HttpStatus } from '@enumerators/HttpStatus';
 import { DataNotFoundException } from '@helpers/errors/DataNotFoundException';
 import { InvalidArgumentException } from '@helpers/errors/InvalidArgumentException';
-import { ProductCreationAttributes } from '@models/Product';
+import { IProduct } from '@models/Product';
 import EntityCollectionResponse from '@models/responses/EntityCollectionResponse';
 import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
@@ -22,16 +22,16 @@ export default class ProductController {
     public postCreate = async(req: Request, res: Response) : Promise<Response> => {
         try{
             let { name, price, costPrice, description, quantity, status, barcode, supplierId }: 
-            { name: string, price: number, costPrice: number, description: string|undefined, quantity: number, status: number, barcode: string|undefined, supplierId: number|undefined}  = req.body;
+            { name: string, price: number, costPrice: number, description: string|undefined, quantity: number, status: number, barcode: string|undefined, supplierId: string|undefined}  = req.body;
             
-            const product = { name, price, costPrice, description, quantity, status, barcode, orders: [], purchases: [] } as ProductCreationAttributes;
+            const product = { name, price, costPrice, description, quantity, status, barcode } as IProduct;
 
             const createdProduct = await this.productService.create(product);
             
             if(supplierId != undefined){
                 const supplier = await this.supplierService.getById(supplierId);
                 if(supplier) {
-                    supplier.addProduct(createdProduct!);
+                    // supplier.addProduct(createdProduct!);
                     // supplier?.save();
                 }
             }
@@ -82,7 +82,7 @@ export default class ProductController {
         try{
             let { id } = req.params;
             
-            const product = await this.productService.getById(+id);
+            const product = await this.productService.getById(id);
             
             if(product == null){
                 throw new DataNotFoundException();

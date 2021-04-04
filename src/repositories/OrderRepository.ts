@@ -2,7 +2,7 @@ import Order, { IOrder } from "@models/Order";
 
 export default class OrderRepository {
 
-    async getById(id: number): Promise<IOrder | null> {
+    async getById(id: string): Promise<IOrder | null> {
         const order = await Order.findById(id)
             .populate("user")
             .populate("payments")

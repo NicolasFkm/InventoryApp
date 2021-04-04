@@ -14,7 +14,7 @@ export default class UserService {
         this.userRepository = new UserRepository();
     }
 
-    async getById(id: number): Promise<IUser | null> {
+    async getById(id: string): Promise<IUser | null> {
         const user = await this.userRepository.getById(id);
 
         return user;
@@ -37,7 +37,7 @@ export default class UserService {
         return createdUser;
     }
 
-    async update(id: number, updateData: Partial<IUser>): Promise<IUser|undefined> {        
+    async update(id: string, updateData: Partial<IUser>): Promise<IUser|undefined> {        
         const user = await this.userRepository.getById(id);
         
         if(user == null) {

@@ -2,7 +2,7 @@ import Supplier, { ISupplier } from "@models/Supplier";
 
 export default class SupplierRepository {
 
-    async getById(id: number): Promise<ISupplier | null> {
+    async getById(id: string): Promise<ISupplier | null> {
         const supplier = await Supplier.findById(id)
             .populate("products");
 

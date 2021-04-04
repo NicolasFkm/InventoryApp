@@ -1,7 +1,7 @@
 import { HttpStatus } from '@enumerators/HttpStatus';
 import { DataNotFoundException } from '@helpers/errors/DataNotFoundException';
 import { InvalidArgumentException } from '@helpers/errors/InvalidArgumentException';
-import { UserCreationAttributes } from '@models/User';
+import { IUser } from '@models/User';
 import EntityCollectionResponse from '@models/responses/EntityCollectionResponse';
 import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
@@ -25,7 +25,7 @@ export default class UserController {
                 username: username.toLowerCase(), 
                 email: email.toLowerCase(), 
                 password, 
-                role} as UserCreationAttributes;
+                role} as IUser;
 
             const createdAccount = await this.userService.create(account);
             
@@ -78,7 +78,7 @@ export default class UserController {
         try{
             let { id } = req.params;
             
-            const account = await this.userService.getById(+id);
+            const account = await this.userService.getById(id);
             
             if(account == null){
                 throw new DataNotFoundException();

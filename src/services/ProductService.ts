@@ -11,7 +11,7 @@ export default class ProductService {
         this.productRepository = new ProductRepository();
     }
 
-    async getById(id: number): Promise<IProduct | null> {
+    async getById(id: string): Promise<IProduct | null> {
         const product = await this.productRepository.getById(id);
 
         return product;
@@ -32,7 +32,7 @@ export default class ProductService {
         return createdProduct;
     }
 
-    async update(id: number, updateData: Partial<IProduct>): Promise<IProduct|undefined> {        
+    async update(id: string, updateData: Partial<IProduct>): Promise<IProduct|undefined> {        
         const product = await this.productRepository.getById(id);
         
         if(product == null) {

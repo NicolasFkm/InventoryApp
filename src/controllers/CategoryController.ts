@@ -1,7 +1,7 @@
 import { HttpStatus } from '@enumerators/HttpStatus';
 import { DataNotFoundException } from '@helpers/errors/DataNotFoundException';
 import { InvalidArgumentException } from '@helpers/errors/InvalidArgumentException';
-import { CategoryCreationAttributes } from '@models/Category';
+import { ICategory } from '@models/Category';
 import EntityCollectionResponse from '@models/responses/EntityCollectionResponse';
 import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
@@ -20,7 +20,7 @@ export default class CategoryController {
         try{
             let { name }: { name: string}  = req.body;
             
-            const category = { name } as CategoryCreationAttributes;
+            const category = { name } as ICategory;
 
             const createdCategory = await this.categoryService.create(category);
             
@@ -70,7 +70,7 @@ export default class CategoryController {
         try{
             let { id } = req.params;
             
-            const category = await this.categoryService.getById(+id);
+            const category = await this.categoryService.getById(id);
             
             if(category == null){
                 throw new DataNotFoundException();

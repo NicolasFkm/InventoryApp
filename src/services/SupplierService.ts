@@ -11,7 +11,7 @@ export default class SupplierService {
         this.supplierRepository = new SupplierRepository();
     }
 
-    async getById(id: number): Promise<ISupplier | null> {
+    async getById(id: string): Promise<ISupplier | null> {
         const supplier = await this.supplierRepository.getById(id);
 
         return supplier;
@@ -32,7 +32,7 @@ export default class SupplierService {
         return createdSupplier;
     }
 
-    async update(id: number, updateData: Partial<ISupplier>): Promise<ISupplier|undefined> {        
+    async update(id: string, updateData: Partial<ISupplier>): Promise<ISupplier|undefined> {        
         const supplier = await this.supplierRepository.getById(id);
         
         if(supplier == null) {

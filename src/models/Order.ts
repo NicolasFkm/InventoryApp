@@ -2,13 +2,13 @@ import { ICoupon } from "./Coupon";
 import { IPayment } from "./Payment";
 import { IUser } from "./User";
 import mongoose, { Schema, Document } from 'mongoose';
-import { ICartItem } from "./CartItem";
+import { IProduct } from "./Product";
 
 export interface IOrder extends Document {
     coupon?: ICoupon;
     user?: IUser;
     payments?: IPayment[];
-    items?: ICartItem[];
+    items?: IProduct[];
 }
 
 const orderSchema = new Schema({
@@ -24,9 +24,9 @@ const orderSchema = new Schema({
 		type: Schema.Types.ObjectId,
         ref: "Payment"
 	}],
-	items: [{
+	products: [{
 		type: Schema.Types.ObjectId,
-        ref: "CartItem"
+        ref: "Product"
 	}]
 },  {
 	timestamps: { createdAt: true, updatedAt: true }

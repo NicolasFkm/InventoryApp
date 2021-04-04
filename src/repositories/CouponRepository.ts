@@ -2,7 +2,7 @@ import Coupon, { ICoupon } from "@models/Coupon";
 
 export default class CouponRepository {
 
-    async getById(id: number): Promise<ICoupon | null> {
+    async getById(id: string): Promise<ICoupon | null> {
         const coupon = await Coupon.findById(id);
 
         return coupon;

@@ -10,7 +10,7 @@ export default class PurchaseService {
         this.purchaseRepository = new PurchaseRepository();
     }
 
-    async getById(id: number): Promise<IPurchase | null> {
+    async getById(id: string): Promise<IPurchase | null> {
         const purchase = await this.purchaseRepository.getById(id);
 
         return purchase;
@@ -22,6 +22,10 @@ export default class PurchaseService {
         return purchase;
     }
 
+    async addProduct(id: string|IPurchase, productId: string){
+        return await this.purchaseRepository.addProduct(id as string, productId);
+    }
+
     async create(purchase: IPurchase): Promise<IPurchase> {
 
         this.validate(purchase);
@@ -31,7 +35,7 @@ export default class PurchaseService {
         return createdPurchase;
     }
 
-    async update(id: number, updateData: Partial<IPurchase>): Promise<IPurchase|undefined> {        
+    async update(id: string, updateData: Partial<IPurchase>): Promise<IPurchase|undefined> {        
         const purchase = await this.purchaseRepository.getById(id);
         
         if(purchase == null) {
@@ -48,7 +52,7 @@ export default class PurchaseService {
     }
 
     validate(purchase: IPurchase): void{
-        if(purchase.items?.length == 0)
+        if(purchase.products?.length == 0)
             throw new InvalidArgumentException("Purchase products invalid.");
     }
 

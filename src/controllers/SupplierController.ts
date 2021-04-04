@@ -1,7 +1,7 @@
 import { HttpStatus } from '@enumerators/HttpStatus';
 import { DataNotFoundException } from '@helpers/errors/DataNotFoundException';
 import { InvalidArgumentException } from '@helpers/errors/InvalidArgumentException';
-import { SupplierCreationAttributes } from '@models/Supplier';
+import { ISupplier } from '@models/Supplier';
 import EntityCollectionResponse from '@models/responses/EntityCollectionResponse';
 import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
@@ -20,7 +20,7 @@ export default class SupplierController {
         try{
             let { name, address, city, state, zipCode }: { name: string, address: string|undefined, city: string|undefined, state: string|undefined, zipCode: string|undefined }  = req.body;
             
-            const supplier = { name, address, city, state, zipCode } as SupplierCreationAttributes;
+            const supplier = { name, address, city, state, zipCode } as ISupplier;
 
             const createdSupplier = await this.supplierService.create(supplier);
             
@@ -70,7 +70,7 @@ export default class SupplierController {
         try{
             let { id } = req.params;
             
-            const supplier = await this.supplierService.getById(+id);
+            const supplier = await this.supplierService.getById(id);
             
             if(supplier == null){
                 throw new DataNotFoundException();

@@ -1,7 +1,7 @@
 import { HttpStatus } from '@enumerators/HttpStatus';
 import { DataNotFoundException } from '@helpers/errors/DataNotFoundException';
 import { InvalidArgumentException } from '@helpers/errors/InvalidArgumentException';
-import { PurchaseCreationAttributes } from '@models/Purchase';
+import { IPurchase } from '@models/Purchase';
 import EntityCollectionResponse from '@models/responses/EntityCollectionResponse';
 import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
@@ -24,26 +24,30 @@ export default class PurchaseController {
 
     public postCreate = async (req: Request, res: Response): Promise<Response> => {
         try {
-            let { productIds, paymentIds }: { productIds: number[], paymentIds: number[] } = req.body;
+            let { items, paymentIds }: { items: IPurchase[], paymentIds: number[] } = req.body;
 
             
-            const purchase = { } as PurchaseCreationAttributes;
+            const purchase = { } as IPurchase;
             
             const createdPurchase = await this.purchaseService.create(purchase);
             
-            let products = await Promise.all(productIds.map(async (id) => {
-                const product = await this.productService.getById(id);
-                if(product != null) createdPurchase.addProduct(product!);
+            // let products = await Promise.all(items.map(async (item) => {
+            //     const product = await this.productService.getById(item.);
+            //     if(product != null){
+            //         this.purchaseService.addProduct(createdPurchase._id, product._id);
+            //     } 
 
-                return product;
-            }));
+            //     return product;
+            // }));
             
-            let payments = await Promise.all(paymentIds.map(async (id) => {
-                const payment = await this.paymentService.getById(id);
-                if(payment != null) createdPurchase.addPayment(payment);
+            // let payments = await Promise.all(paymentIds.map(async (id) => {
+            //     const payment = await this.paymentService.getById(id);
+            //     if(payment != null) createdPurchase.payments?.push(payment)
 
-                return payment;
-            }));
+            //     return payment;
+            // }));
+
+            createdPurchase.save();
 
             let response = new EntityResponse(createdPurchase, req.url);
 
@@ -91,7 +95,7 @@ export default class PurchaseController {
         try {
             let { id } = req.params;
 
-            const purchase = await this.purchaseService.getById(+id);
+            const purchase = await this.purchaseService.getById(id);
 
             if (purchase == null) {
                 throw new DataNotFoundException();

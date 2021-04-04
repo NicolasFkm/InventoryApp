@@ -10,7 +10,7 @@ export default class PaymentService {
         this.paymentRepository = new PaymentRepository();
     }
 
-    async getById(id: number): Promise<IPayment | null> {
+    async getById(id: string): Promise<IPayment | null> {
         const payment = await this.paymentRepository.getById(id);
 
         return payment;
@@ -31,7 +31,7 @@ export default class PaymentService {
         return createdPayment;
     }
 
-    async update(id: number, updateData: Partial<IPayment>): Promise<IPayment|undefined> {        
+    async update(id: string, updateData: Partial<IPayment>): Promise<IPayment|undefined> {        
         const payment = await this.paymentRepository.getById(id);
         
         if(payment == null) {

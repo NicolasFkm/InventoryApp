@@ -15,6 +15,7 @@ export class Routes {
   public paymentController: PaymentController = new PaymentController();
 
   public map(app: Application): void {
+    app.route("/").get((req, res) => { return res.send({response: true})});
     app.route("/login").post(this.loginController.postAuthenticate);
     
     app.route("/user").post(this.userController.postCreate);

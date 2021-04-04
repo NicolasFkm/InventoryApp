@@ -11,7 +11,7 @@ export default class CategoryService {
         this.categoryRepository = new CategoryRepository();
     }
 
-    async getById(id: number): Promise<ICategory | null> {
+    async getById(id: string): Promise<ICategory | null> {
         const category = await this.categoryRepository.getById(id);
 
         return category;
@@ -32,7 +32,7 @@ export default class CategoryService {
         return createdCategory;
     }
 
-    async update(id: number, updateData: Partial<ICategory>): Promise<ICategory|undefined> {        
+    async update(id: string, updateData: Partial<ICategory>): Promise<ICategory|undefined> {        
         const category = await this.categoryRepository.getById(id);
         
         if(category == null) {

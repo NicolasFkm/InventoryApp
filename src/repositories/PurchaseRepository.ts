@@ -1,8 +1,10 @@
 import Purchase, { IPurchase } from "@models/Purchase";
+import Product from "@models/Product";
+import { DataNotFoundException } from "@helpers/errors/DataNotFoundException";
 
 export default class PurchaseRepository {
 
-    async getById(id: number): Promise<IPurchase | null> {
+    async getById(id: string): Promise<IPurchase | null> {
         const purchase = await Purchase.findById(id);
 
         return purchase;
@@ -12,6 +14,21 @@ export default class PurchaseRepository {
         const purchase = await Purchase.find();
 
         return purchase;
+    }
+
+    async addProduct(id: string, productId: string): Promise<IPurchase|null> {
+
+        const product = await Product.findById(productId);
+        
+        if(product != null){
+            const purchase = await Purchase.findByIdAndUpdate(id, 
+                { $push: {products: product._id}}, 
+                { new: true, useFindAndModify: false});
+            
+            return purchase;
+        }
+
+        throw new DataNotFoundException("Product not find");
     }
 
     async add(purchase: IPurchase): Promise<IPurchase> {

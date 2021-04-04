@@ -2,7 +2,7 @@ import Category, { ICategory } from "@models/Category";
 
 export default class CategoryRepository {
 
-    async getById(id: number): Promise<ICategory | null> {
+    async getById(id: string): Promise<ICategory | null> {
         const category = await Category.findById(id)
             .populate("products")
 

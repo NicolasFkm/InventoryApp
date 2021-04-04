@@ -2,10 +2,8 @@ import User, { IUser } from "@models/User";
 
 export default class UserRepository {
 
-    async getById(id: number): Promise<IUser | null> {
-        const user = await User.findById(id)
-            .populate("orders");
-
+    async getById(id: string): Promise<IUser | null> {
+        const user = await User.findById(id)?.populate("order");
         return user;
     }
 

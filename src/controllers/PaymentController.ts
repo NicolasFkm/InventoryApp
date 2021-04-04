@@ -1,7 +1,7 @@
 import { HttpStatus } from '@enumerators/HttpStatus';
 import { DataNotFoundException } from '@helpers/errors/DataNotFoundException';
 import { InvalidArgumentException } from '@helpers/errors/InvalidArgumentException';
-import { PaymentCreationAttributes } from '@models/Payment';
+import { IPayment } from '@models/Payment';
 import EntityCollectionResponse from '@models/responses/EntityCollectionResponse';
 import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
@@ -22,7 +22,7 @@ export default class PaymentController {
             
             if(installments == 0 || installments == undefined) installments = 1;
 
-            const payment = { type, installments, value } as PaymentCreationAttributes;
+            const payment = { type, installments, value } as IPayment;
 
             const createdPayment = await this.paymentService.create(payment);
             
@@ -72,7 +72,7 @@ export default class PaymentController {
         try{
             let { id } = req.params;
             
-            const payment = await this.paymentService.getById(+id);
+            const payment = await this.paymentService.getById(id);
             
             if(payment == null){
                 throw new DataNotFoundException();

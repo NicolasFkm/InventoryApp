@@ -2,7 +2,7 @@ import Payment, { IPayment } from "@models/Payment";
 
 export default class PaymentRepository {
 
-    async getById(id: number): Promise<IPayment | null> {
+    async getById(id: string): Promise<IPayment | null> {
         const payment = await Payment.findById(id);
 
         return payment;
