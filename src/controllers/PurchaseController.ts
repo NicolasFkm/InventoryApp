@@ -26,11 +26,11 @@ export default class PurchaseController {
         try {
             let { items, paymentIds }: { items: IPurchase[], paymentIds: number[] } = req.body;
 
-            
-            const purchase = { } as IPurchase;
-            
+
+            const purchase = {} as IPurchase;
+
             const createdPurchase = await this.purchaseService.create(purchase);
-            
+
             // let products = await Promise.all(items.map(async (item) => {
             //     const product = await this.productService.getById(item.);
             //     if(product != null){
@@ -39,7 +39,7 @@ export default class PurchaseController {
 
             //     return product;
             // }));
-            
+
             // let payments = await Promise.all(paymentIds.map(async (id) => {
             //     const payment = await this.paymentService.getById(id);
             //     if(payment != null) createdPurchase.payments?.push(payment)

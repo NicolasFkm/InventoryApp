@@ -10,7 +10,7 @@ export default class UserService {
     private _salt: number = 12;
     public userRepository: UserRepository;
 
-    constructor(){
+    constructor() {
         this.userRepository = new UserRepository();
     }
 
@@ -37,34 +37,26 @@ export default class UserService {
         return createdUser;
     }
 
-    async update(id: string, updateData: Partial<IUser>): Promise<IUser|undefined> {        
-        const user = await this.userRepository.getById(id);
-        
-        if(user == null) {
-            throw new InvalidArgumentException("Invalid user identifier.");
-        }
-
-        let userData: IUser = {...user, ...updateData} as IUser;
-        
+    async update(id: string, userData: IUser): Promise<boolean> {
         this.validate(userData);
 
-        const updatedUser = await this.userRepository.update(user, updateData)
+        const updatedUser = await this.userRepository.update(id, userData);
 
-        return updatedUser;
+        return updatedUser.ok == 1;
     }
 
-    validate(user: IUser): void{
-        
-        if(!validator.isEmail(user.email!))
+    validate(user: IUser): void {
+
+        if (!validator.isEmail(user.email!))
             throw new InvalidArgumentException("E-mail invalid.");
-        
-        if(!validator.isLength(user.username!, {min: 4, max: 32}))
+
+        if (!validator.isLength(user.username!, { min: 4, max: 32 }))
             throw new InvalidArgumentException("Username invalid.");
-        
-        if(validator.isEmpty(user.name!))
+
+        if (validator.isEmpty(user.name!))
             throw new InvalidArgumentException("Name invalid.");
-        
-        if(!validator.isStrongPassword(user.password!, {minLength: 6, minLowercase: 1, minNumbers: 1, minUppercase: 1, minSymbols: 0}))
+
+        if (user.password != undefined && !validator.isStrongPassword(user.password!, { minLength: 6, minLowercase: 1, minNumbers: 1, minUppercase: 1, minSymbols: 0 }))
             throw new InvalidArgumentException("Password invalid.");
     }
 

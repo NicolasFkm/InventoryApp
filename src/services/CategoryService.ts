@@ -7,7 +7,7 @@ export default class CategoryService {
 
     public categoryRepository: CategoryRepository;
 
-    constructor(){
+    constructor() {
         this.categoryRepository = new CategoryRepository();
     }
 
@@ -32,24 +32,16 @@ export default class CategoryService {
         return createdCategory;
     }
 
-    async update(id: string, updateData: Partial<ICategory>): Promise<ICategory|undefined> {        
-        const category = await this.categoryRepository.getById(id);
-        
-        if(category == null) {
-            throw new InvalidArgumentException("Invalid category identifier.");
-        }
+    async update(id: string, updateCategory: ICategory): Promise<boolean> {
+        this.validate(updateCategory);
 
-        let categoryData: ICategory = {...category, ...updateData} as ICategory;
-        
-        this.validate(categoryData);
+        const updatedCategory = await this.categoryRepository.update(id, updateCategory)
 
-        const updatedCategory = await this.categoryRepository.update(category, updateData)
-
-        return updatedCategory;
+        return updatedCategory.ok == 1;
     }
 
-    validate(category: ICategory): void{
-        if(validator.isEmpty(category.name!))
+    validate(category: ICategory): void {
+        if (validator.isEmpty(category.name!))
             throw new InvalidArgumentException("Category name is invalid.");
     }
 

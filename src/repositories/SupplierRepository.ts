@@ -1,4 +1,5 @@
 import Supplier, { ISupplier } from "@models/Supplier";
+import { UpdateWriteOpResult } from "mongoose";
 
 export default class SupplierRepository {
 
@@ -22,10 +23,10 @@ export default class SupplierRepository {
         return createdSupplier;
     }
 
-    async update(supplier: ISupplier, updateData: Partial<ISupplier>): Promise<ISupplier | undefined> {
-        const updatedSupplier = await supplier?.update(updateData)
+    async update(id: string, supplier: ISupplier): Promise<UpdateWriteOpResult> {
+        const updatedUser = await Supplier.updateOne({ id }, supplier)
 
-        return updatedSupplier;
+        return updatedUser;
     }
 
 }

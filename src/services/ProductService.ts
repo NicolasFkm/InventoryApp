@@ -7,7 +7,7 @@ export default class ProductService {
 
     public productRepository: ProductRepository;
 
-    constructor(){
+    constructor() {
         this.productRepository = new ProductRepository();
     }
 
@@ -32,34 +32,26 @@ export default class ProductService {
         return createdProduct;
     }
 
-    async update(id: string, updateData: Partial<IProduct>): Promise<IProduct|undefined> {        
-        const product = await this.productRepository.getById(id);
-        
-        if(product == null) {
-            throw new InvalidArgumentException("Invalid product identifier.");
-        }
-
-        let productData: IProduct = {...product, ...updateData} as IProduct;
-        
+    async update(id: string, productData: IProduct): Promise<boolean> {
         this.validate(productData);
 
-        const updatedProduct = await this.productRepository.update(product, updateData)
+        const updatedProduct = await this.productRepository.update(id, productData)
 
-        return updatedProduct;
+        return updatedProduct.ok == 1;
     }
 
-    validate(product: IProduct): void{
-        
-        if(validator.isEmpty(product.name!))
+    validate(product: IProduct): void {
+
+        if (validator.isEmpty(product.name!))
             throw new InvalidArgumentException("Product name is invalid.");
-        
-        if(product.price < 0)
+
+        if (product.price < 0)
             throw new InvalidArgumentException("Product price invalid.");
-        
-        if(product.costPrice < 0)
+
+        if (product.costPrice < 0)
             throw new InvalidArgumentException("Product cost price invalid.");
-        
-        if(product.quantity < 0)
+
+        if (product.quantity < 0)
             throw new InvalidArgumentException("Product quantity invalid.");
     }
 

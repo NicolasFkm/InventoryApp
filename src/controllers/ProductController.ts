@@ -14,39 +14,39 @@ export default class ProductController {
     public productService: ProductService;
     public supplierService: SupplierService;
 
-    constructor(){
+    constructor() {
         this.productService = new ProductService();;
         this.supplierService = new SupplierService();;
     }
 
-    public postCreate = async(req: Request, res: Response) : Promise<Response> => {
-        try{
-            let { name, price, costPrice, description, quantity, status, barcode, supplierId }: 
-            { name: string, price: number, costPrice: number, description: string|undefined, quantity: number, status: number, barcode: string|undefined, supplierId: string|undefined}  = req.body;
-            
+    public postCreate = async (req: Request, res: Response): Promise<Response> => {
+        try {
+            let { name, price, costPrice, description, quantity, status, barcode, supplierId }:
+                { name: string, price: number, costPrice: number, description: string | undefined, quantity: number, status: number, barcode: string | undefined, supplierId: string | undefined } = req.body;
+
             const product = { name, price, costPrice, description, quantity, status, barcode } as IProduct;
 
             const createdProduct = await this.productService.create(product);
-            
-            if(supplierId != undefined){
+
+            if (supplierId != undefined) {
                 const supplier = await this.supplierService.getById(supplierId);
-                if(supplier) {
+                if (supplier) {
                     // supplier.addProduct(createdProduct!);
                     // supplier?.save();
                 }
             }
 
             let response = new EntityResponse(createdProduct, req.url);
-            
+
             let responseStatus = HttpStatus.SUCCESS;
-            
+
             return res.status(responseStatus).send(response);
         }
-        catch(error){
+        catch (error) {
             let status = HttpStatus.INTERNAL_SERVER_ERROR;
             let errorResponse = new ErrorResponse(req.url);
-            
-            if(error instanceof InvalidArgumentException){
+
+            if (error instanceof InvalidArgumentException) {
                 status = HttpStatus.BAD_REQUEST;
                 errorResponse.message = error.message;
             }
@@ -54,22 +54,22 @@ export default class ProductController {
             return res.status(status).send(errorResponse);
         }
     }
-    
-    public getAll = async(req: Request, res: Response) : Promise<Response> => {
-        try{
+
+    public getAll = async (req: Request, res: Response): Promise<Response> => {
+        try {
             const products = await this.productService.getAll();
-            
+
             let response = new EntityCollectionResponse(products, req.url);
-            
+
             let status = HttpStatus.SUCCESS;
-            
+
             return res.status(status).send(response);
         }
-        catch(error){
+        catch (error) {
             let status = HttpStatus.INTERNAL_SERVER_ERROR;
             let errorResponse = new ErrorResponse(req.url);
-            
-            if(error instanceof InvalidArgumentException){
+
+            if (error instanceof InvalidArgumentException) {
                 status = HttpStatus.BAD_REQUEST;
                 errorResponse.message = error.message;
             }
@@ -78,32 +78,32 @@ export default class ProductController {
         }
     }
 
-    public getById = async(req: Request, res: Response) : Promise<Response> => {
-        try{
+    public getById = async (req: Request, res: Response): Promise<Response> => {
+        try {
             let { id } = req.params;
-            
+
             const product = await this.productService.getById(id);
-            
-            if(product == null){
+
+            if (product == null) {
                 throw new DataNotFoundException();
             }
 
             let response = new EntityResponse(product, req.url);
-            
+
             let status = HttpStatus.SUCCESS;
-            
+
             return res.status(status).send(response);
         }
-        catch(error){
+        catch (error) {
             let status = HttpStatus.INTERNAL_SERVER_ERROR;
             let errorResponse = new ErrorResponse(req.url);
-            
-            if(error instanceof InvalidArgumentException){
+
+            if (error instanceof InvalidArgumentException) {
                 status = HttpStatus.BAD_REQUEST;
                 errorResponse.message = error.message;
             }
-            
-            if(error instanceof DataNotFoundException){
+
+            if (error instanceof DataNotFoundException) {
                 status = HttpStatus.NOT_FOUND;
                 errorResponse.message = error.message;
             }

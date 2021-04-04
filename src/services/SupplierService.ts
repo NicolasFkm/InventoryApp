@@ -7,7 +7,7 @@ export default class SupplierService {
 
     public supplierRepository: SupplierRepository;
 
-    constructor(){
+    constructor() {
         this.supplierRepository = new SupplierRepository();
     }
 
@@ -32,24 +32,16 @@ export default class SupplierService {
         return createdSupplier;
     }
 
-    async update(id: string, updateData: Partial<ISupplier>): Promise<ISupplier|undefined> {        
-        const supplier = await this.supplierRepository.getById(id);
-        
-        if(supplier == null) {
-            throw new InvalidArgumentException("Invalid supplier identifier.");
-        }
-
-        let supplierData: ISupplier = {...supplier, ...updateData} as ISupplier;
-        
+    async update(id: string, supplierData: ISupplier): Promise<boolean> {
         this.validate(supplierData);
 
-        const updatedSupplier = await this.supplierRepository.update(supplier, updateData)
+        const updatedSupplier = await this.supplierRepository.update(id, supplierData)
 
-        return updatedSupplier;
+        return updatedSupplier.ok == 1;
     }
 
-    validate(supplier: ISupplier): void{
-        if(validator.isEmpty(supplier.name!))
+    validate(supplier: ISupplier): void {
+        if (validator.isEmpty(supplier.name!))
             throw new InvalidArgumentException("Supplier name is invalid.");
     }
 

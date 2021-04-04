@@ -6,7 +6,7 @@ export default class PurchaseService {
 
     public purchaseRepository: PurchaseRepository;
 
-    constructor(){
+    constructor() {
         this.purchaseRepository = new PurchaseRepository();
     }
 
@@ -22,7 +22,7 @@ export default class PurchaseService {
         return purchase;
     }
 
-    async addProduct(id: string|IPurchase, productId: string){
+    async addProduct(id: string | IPurchase, productId: string) {
         return await this.purchaseRepository.addProduct(id as string, productId);
     }
 
@@ -35,24 +35,16 @@ export default class PurchaseService {
         return createdPurchase;
     }
 
-    async update(id: string, updateData: Partial<IPurchase>): Promise<IPurchase|undefined> {        
-        const purchase = await this.purchaseRepository.getById(id);
-        
-        if(purchase == null) {
-            throw new InvalidArgumentException("Invalid purchase identifier.");
-        }
-
-        let purchaseData: IPurchase = {...purchase, ...updateData} as IPurchase;
-        
+    async update(id: string, purchaseData: IPurchase): Promise<boolean> {
         this.validate(purchaseData);
 
-        const updatedPurchase = await this.purchaseRepository.update(purchase, updateData)
+        const updatedPurchase = await this.purchaseRepository.update(id, purchaseData);
 
-        return updatedPurchase;
+        return updatedPurchase.ok == 1;
     }
 
-    validate(purchase: IPurchase): void{
-        if(purchase.products?.length == 0)
+    validate(purchase: IPurchase): void {
+        if (purchase.products?.length == 0)
             throw new InvalidArgumentException("Purchase products invalid.");
     }
 

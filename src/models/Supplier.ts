@@ -2,12 +2,12 @@ import { IProduct } from "./Product";
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface ISupplier extends Document {
-    name: string;
+	name: string;
 	address?: string;
 	city?: string;
 	state?: string;
 	zipCode?: string;
-    products?: IProduct[];
+	products?: IProduct[];
 }
 
 const supplierSchema = new Schema({
@@ -28,9 +28,9 @@ const supplierSchema = new Schema({
 	},
 	products: [{
 		type: Schema.Types.ObjectId,
-        ref: "Product"
+		ref: "Product"
 	}]
-},  {
+}, {
 	timestamps: { createdAt: true, updatedAt: true }
 })
 

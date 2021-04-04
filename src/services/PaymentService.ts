@@ -6,7 +6,7 @@ export default class PaymentService {
 
     public paymentRepository: PaymentRepository;
 
-    constructor(){
+    constructor() {
         this.paymentRepository = new PaymentRepository();
     }
 
@@ -31,24 +31,16 @@ export default class PaymentService {
         return createdPayment;
     }
 
-    async update(id: string, updateData: Partial<IPayment>): Promise<IPayment|undefined> {        
-        const payment = await this.paymentRepository.getById(id);
-        
-        if(payment == null) {
-            throw new InvalidArgumentException("Invalid payment identifier.");
-        }
-
-        let paymentData: IPayment = {...payment, ...updateData} as IPayment;
-        
+    async update(id: string, paymentData: IPayment): Promise<boolean> {
         this.validate(paymentData);
 
-        const updatedPayment = await this.paymentRepository.update(payment, updateData)
+        const updatedPayment = await this.paymentRepository.update(id, paymentData)
 
-        return updatedPayment;
+        return updatedPayment.ok == 1;
     }
 
-    validate(payment: IPayment): void{
-        if(payment.value <= 0)
+    validate(payment: IPayment): void {
+        if (payment.value <= 0)
             throw new InvalidArgumentException("Payment amount invalid.");
     }
 

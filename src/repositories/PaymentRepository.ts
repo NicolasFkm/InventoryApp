@@ -1,4 +1,5 @@
 import Payment, { IPayment } from "@models/Payment";
+import { UpdateWriteOpResult } from "mongoose";
 
 export default class PaymentRepository {
 
@@ -21,8 +22,8 @@ export default class PaymentRepository {
         return createdPayment;
     }
 
-    async update(payment: IPayment, updateData: Partial<IPayment>): Promise<IPayment | undefined> {
-        const updatedPayment = await payment?.update(updateData)
+    async update(id: string, payment: IPayment): Promise<UpdateWriteOpResult> {
+        const updatedPayment = await Payment.updateOne({ id }, payment)
 
         return updatedPayment;
     }

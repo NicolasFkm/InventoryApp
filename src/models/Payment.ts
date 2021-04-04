@@ -5,8 +5,8 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IPayment extends Document {
 	value: number;
-    type: PaymentType;
-    installments?: number;
+	type: PaymentType;
+	installments?: number;
 	order?: IOrder;
 	purchase?: IPurchase;
 }
@@ -32,7 +32,7 @@ const paymentSchema = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: "Purchase"
 	}
-},  {
+}, {
 	timestamps: { createdAt: true, updatedAt: true }
 })
 

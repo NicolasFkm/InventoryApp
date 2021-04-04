@@ -8,14 +8,14 @@ export interface ICategory extends Document {
 
 const categorySchema = new Schema({
 	name: {
-        type: String,
-        required: true
-    },
+		type: String,
+		required: true
+	},
 	products: [{
 		type: Schema.Types.ObjectId,
-        ref: "Product"
+		ref: "Product"
 	}]
-},  {
+}, {
 	timestamps: { createdAt: true, updatedAt: true }
 })
 

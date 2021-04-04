@@ -1,4 +1,5 @@
 import Order, { IOrder } from "@models/Order";
+import { UpdateWriteOpResult } from "mongoose";
 
 export default class OrderRepository {
 
@@ -24,8 +25,8 @@ export default class OrderRepository {
         return createdOrder;
     }
 
-    async update(order: IOrder, updateData: Partial<IOrder>): Promise<IOrder | undefined> {
-        const updatedOrder = await order?.update(updateData)
+    async update(id: number, order: IOrder): Promise<UpdateWriteOpResult> {
+        const updatedOrder = await Order.updateOne({ id }, order);
 
         return updatedOrder;
     }

@@ -1,4 +1,5 @@
 import Coupon, { ICoupon } from "@models/Coupon";
+import { UpdateWriteOpResult } from "mongoose";
 
 export default class CouponRepository {
 
@@ -21,8 +22,8 @@ export default class CouponRepository {
         return createdCoupon;
     }
 
-    async update(Coupon: ICoupon, updateData: Partial<ICoupon>): Promise<ICoupon | undefined> {
-        const updatedCoupon = await Coupon?.update(updateData)
+    async update(id: string, coupon: ICoupon): Promise<UpdateWriteOpResult> {
+        const updatedCoupon = await Coupon.updateOne({ id }, coupon)
 
         return updatedCoupon;
     }

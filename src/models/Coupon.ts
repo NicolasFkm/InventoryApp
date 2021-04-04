@@ -3,17 +3,17 @@ import { IOrder } from "./Order";
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface ICoupon extends Document {
-    code: string;
-    type: CouponType;
-    value: number;
+	code: string;
+	type: CouponType;
+	value: number;
 	orders: IOrder[];
 }
 
 const couponSchema = new Schema({
 	code: {
-        type: String,
-        required: true
-    },
+		type: String,
+		required: true
+	},
 	type: {
 		type: Number,
 		min: 0,
@@ -28,7 +28,7 @@ const couponSchema = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: "Order"
 	}]
-},  {
+}, {
 	timestamps: { createdAt: true, updatedAt: true }
 })
 

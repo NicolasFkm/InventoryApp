@@ -11,34 +11,34 @@ export default class UserController {
 
     public loginService: LoginService;
 
-    constructor(){
+    constructor() {
         this.loginService = new LoginService();;
     }
 
-    public postAuthenticate =  async (req: Request, res: Response) : Promise<void> => {
-        try{
-            let { email, password}: {email: string, password:string }  = req.body;
-            
+    public postAuthenticate = async (req: Request, res: Response): Promise<void> => {
+        try {
+            let { email, password }: { email: string, password: string } = req.body;
+
             const login = {
-                email: email.toLowerCase(), 
+                email: email.toLowerCase(),
                 password
             } as Login;
 
             const isAuthenticated = await this.loginService.authenticate(login);
-            
+
             let response = new StatusResponse(req.url, isAuthenticated);
-            
-            let status = (isAuthenticated)? 
-            HttpStatus.SUCCESS: 
-            HttpStatus.UNAUTHORIZED;
-            
+
+            let status = (isAuthenticated) ?
+                HttpStatus.SUCCESS :
+                HttpStatus.UNAUTHORIZED;
+
             res.status(status).send(response);
         }
-        catch(error){
+        catch (error) {
             let status = HttpStatus.INTERNAL_SERVER_ERROR;
             let errorResponse = new ErrorResponse(req.url);
-            
-            if(error instanceof InvalidArgumentException){
+
+            if (error instanceof InvalidArgumentException) {
                 status = HttpStatus.BAD_REQUEST;
                 errorResponse.message = error.message;
             }

@@ -1,4 +1,5 @@
 import User, { IUser } from "@models/User";
+import { UpdateWriteOpResult } from "mongoose";
 
 export default class UserRepository {
 
@@ -27,8 +28,8 @@ export default class UserRepository {
         return createdUser;
     }
 
-    async update(user: IUser, updateData: Partial<IUser>): Promise<IUser | undefined> {
-        const updatedUser = await user?.update(updateData)
+    async update(id: string, user: IUser): Promise<UpdateWriteOpResult> {
+        const updatedUser = await User.updateOne({ id }, user)
 
         return updatedUser;
     }

@@ -6,19 +6,19 @@ export default class LoginService {
 
     public userRepository: UserRepository;
 
-    constructor(){
+    constructor() {
         this.userRepository = new UserRepository();
     }
 
-    public authenticate = async(login: Login) : Promise<boolean> => {
+    public authenticate = async (login: Login): Promise<boolean> => {
         const account = await this.userRepository.getByEmail(login.email);
-        
-        if(account == null){
+
+        if (account == null) {
             return false;
         }
 
         const isValid = bcrypt.compareSync(login.password, account?.password!);
-        
+
         return isValid;
     }
 }

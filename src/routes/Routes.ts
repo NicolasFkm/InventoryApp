@@ -20,6 +20,7 @@ export class Routes {
     
     app.route("/user").post(this.userController.postCreate);
     app.route("/user").get(this.userController.getAll);
+    app.route("/user/:id").put(this.userController.putUpdateUser);
     app.route("/user/:id").get(this.userController.getById);
     
     app.route("/purchase").post(this.purchaseController.postCreate);

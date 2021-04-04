@@ -12,7 +12,7 @@ export interface IUser extends Document {
 }
 
 const userSchema = new Schema({
-	name: {
+    name: {
         type: String
     },
     username: {
@@ -34,8 +34,8 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Order"
     }]
-},  {
-	timestamps: { createdAt: true, updatedAt: true }
+}, {
+    timestamps: { createdAt: true, updatedAt: true }
 })
 
 export default mongoose.model<IUser>('User', userSchema);

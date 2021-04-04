@@ -1,4 +1,5 @@
 import Category, { ICategory } from "@models/Category";
+import { UpdateWriteOpResult } from "mongoose";
 
 export default class CategoryRepository {
 
@@ -22,8 +23,8 @@ export default class CategoryRepository {
         return createdCategory;
     }
 
-    async update(category: ICategory, updateData: Partial<ICategory>): Promise<ICategory | undefined> {
-        const updatedCategory = await category?.update(updateData)
+    async update(id: string, category: ICategory): Promise<UpdateWriteOpResult> {
+        const updatedCategory = await Category.updateOne({ id }, category)
 
         return updatedCategory;
     }

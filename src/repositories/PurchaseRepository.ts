@@ -1,6 +1,7 @@
 import Purchase, { IPurchase } from "@models/Purchase";
 import Product from "@models/Product";
 import { DataNotFoundException } from "@helpers/errors/DataNotFoundException";
+import { UpdateWriteOpResult } from "mongoose";
 
 export default class PurchaseRepository {
 
@@ -38,10 +39,12 @@ export default class PurchaseRepository {
         return createdPurchase;
     }
 
-    async update(purchase: IPurchase, updateData: Partial<IPurchase>): Promise<IPurchase | undefined> {
-        const updatedPurchase = await purchase?.update(updateData)
+    async update(id: string, purchase: IPurchase): Promise<UpdateWriteOpResult> {
+        const updatedUser = await Purchase.updateOne({ id }, purchase)
 
-        return updatedPurchase;
+        return updatedUser;
     }
+
+    
 
 }
