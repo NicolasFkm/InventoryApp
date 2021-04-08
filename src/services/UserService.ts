@@ -32,7 +32,7 @@ export default class UserService {
 
         user.password = await bcrypt.hash(user.password, this._salt);
 
-        const createdUser = this.userRepository.add(user);;
+        const createdUser = this.userRepository.create(user);;
 
         return createdUser;
     }

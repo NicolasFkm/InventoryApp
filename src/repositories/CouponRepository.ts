@@ -15,7 +15,7 @@ export default class CouponRepository {
         return coupon;
     }
 
-    async add(coupon: ICoupon): Promise<ICoupon> {
+    async create(coupon: ICoupon): Promise<ICoupon> {
 
         const createdCoupon = await Coupon.create(coupon);
 

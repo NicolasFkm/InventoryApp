@@ -16,7 +16,7 @@ export default class SupplierRepository {
         return supplier;
     }
 
-    async add(supplier: ISupplier): Promise<ISupplier> {
+    async create(supplier: ISupplier): Promise<ISupplier> {
 
         const createdSupplier = await Supplier.create(supplier);
 

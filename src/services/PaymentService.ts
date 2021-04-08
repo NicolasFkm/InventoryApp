@@ -26,7 +26,7 @@ export default class PaymentService {
 
         this.validate(payment);
 
-        const createdPayment = this.paymentRepository.add(payment);;
+        const createdPayment = this.paymentRepository.create(payment);;
 
         return createdPayment;
     }

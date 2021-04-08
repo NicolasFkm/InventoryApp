@@ -2,6 +2,7 @@ import Purchase, { IPurchase } from "@models/Purchase";
 import Product from "@models/Product";
 import { DataNotFoundException } from "@helpers/errors/DataNotFoundException";
 import { UpdateWriteOpResult } from "mongoose";
+import Payment from "@models/Payment";
 
 export default class PurchaseRepository {
 
@@ -17,22 +18,22 @@ export default class PurchaseRepository {
         return purchase;
     }
 
-    async addProduct(id: string, productId: string): Promise<IPurchase|null> {
+    async addPayment(id: string, productId: string): Promise<IPurchase|null> {
 
-        const product = await Product.findById(productId);
+        const payment = await Payment.findById(productId);
         
-        if(product != null){
+        if(payment != null){
             const purchase = await Purchase.findByIdAndUpdate(id, 
-                { $push: {products: product._id}}, 
+                { $push: {products: payment._id}}, 
                 { new: true, useFindAndModify: false});
             
             return purchase;
         }
 
-        throw new DataNotFoundException("Product not find");
+        throw new DataNotFoundException("Couldn't find the payment");
     }
 
-    async add(purchase: IPurchase): Promise<IPurchase> {
+    async create(purchase: IPurchase): Promise<IPurchase> {
 
         const createdPurchase = await Purchase.create(purchase);
 

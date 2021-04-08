@@ -27,7 +27,7 @@ export default class CategoryService {
 
         this.validate(category);
 
-        const createdCategory = this.categoryRepository.add(category);;
+        const createdCategory = this.categoryRepository.create(category);;
 
         return createdCategory;
     }

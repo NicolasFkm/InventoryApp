@@ -21,7 +21,7 @@ export default class UserRepository {
         return user;
     }
 
-    async add(user: IUser): Promise<IUser> {
+    async create(user: IUser): Promise<IUser> {
 
         const createdUser = await User.create(user);
 

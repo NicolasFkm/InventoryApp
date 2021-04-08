@@ -27,7 +27,7 @@ export default class SupplierService {
 
         this.validate(supplier);
 
-        const createdSupplier = this.supplierRepository.add(supplier);;
+        const createdSupplier = this.supplierRepository.create(supplier);;
 
         return createdSupplier;
     }

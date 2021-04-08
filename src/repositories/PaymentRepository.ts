@@ -15,7 +15,7 @@ export default class PaymentRepository {
         return payment;
     }
 
-    async add(payment: IPayment): Promise<IPayment> {
+    async create(payment: IPayment): Promise<IPayment> {
 
         const createdPayment = await Payment.create(payment);
 

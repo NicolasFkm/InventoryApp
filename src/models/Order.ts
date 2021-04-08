@@ -3,30 +3,26 @@ import { IPayment } from "./Payment";
 import { IUser } from "./User";
 import mongoose, { Schema, Document } from 'mongoose';
 import { IProduct } from "./Product";
+import { ICart } from "./Cart";
 
 export interface IOrder extends Document {
-	coupon?: ICoupon;
-	user?: IUser;
+	cart: ICart;
 	payments?: IPayment[];
-	items?: IProduct[];
+	coupon?: ICoupon;
 }
 
 const orderSchema = new Schema({
+	cart: {
+		type: Schema.Types.ObjectId,
+		ref: "Cart"
+	},
 	coupon: {
 		type: Schema.Types.ObjectId,
-		ref: "Coupon"
-	},
-	user: {
-		type: Schema.Types.ObjectId,
-		ref: "User"
+		ref: "Order"
 	},
 	payments: [{
 		type: Schema.Types.ObjectId,
 		ref: "Payment"
-	}],
-	products: [{
-		type: Schema.Types.ObjectId,
-		ref: "Product"
 	}]
 }, {
 	timestamps: { createdAt: true, updatedAt: true }

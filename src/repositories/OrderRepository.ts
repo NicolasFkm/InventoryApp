@@ -18,7 +18,7 @@ export default class OrderRepository {
         return order;
     }
 
-    async add(order: IOrder): Promise<IOrder> {
+    async create(order: IOrder): Promise<IOrder> {
 
         const createdOrder = await Order.create(order);
 

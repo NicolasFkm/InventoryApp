@@ -1,10 +1,11 @@
 import { IPayment } from "./Payment";
 import mongoose, { Schema, Document } from 'mongoose';
 import { IProduct } from "./Product";
+import { ICart } from "./Cart";
 
 export interface IPurchase extends Document {
 	payments?: IPayment[];
-	products?: IProduct[];
+	cart: ICart;
 }
 
 const purchaseSchema = new Schema({
@@ -12,10 +13,10 @@ const purchaseSchema = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: "Payment"
 	}],
-	products: [{
+	cart: {
 		type: Schema.Types.ObjectId,
-		ref: "Product"
-	}]
+		ref: "Cart"
+	}
 }, {
 	timestamps: { createdAt: true, updatedAt: true }
 })

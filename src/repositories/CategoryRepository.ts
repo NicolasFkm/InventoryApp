@@ -16,7 +16,7 @@ export default class CategoryRepository {
         return category;
     }
 
-    async add(category: ICategory): Promise<ICategory> {
+    async create(category: ICategory): Promise<ICategory> {
 
         const createdCategory = await Category.create(category);
 

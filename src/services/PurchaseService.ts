@@ -1,13 +1,17 @@
 import { InvalidArgumentException } from "@helpers/errors/InvalidArgumentException";
+import { IProduct } from "@models/Product";
 import { IPurchase } from "@models/Purchase";
+import ProductRepository from "@repositories/ProductRepository";
 import PurchaseRepository from "@repositories/PurchaseRepository";
 
 export default class PurchaseService {
 
     public purchaseRepository: PurchaseRepository;
+    public productRepository: ProductRepository;
 
     constructor() {
         this.purchaseRepository = new PurchaseRepository();
+        this.productRepository = new ProductRepository();
     }
 
     async getById(id: string): Promise<IPurchase | null> {
@@ -22,15 +26,19 @@ export default class PurchaseService {
         return purchase;
     }
 
-    async addProduct(id: string | IPurchase, productId: string) {
-        return await this.purchaseRepository.addProduct(id as string, productId);
+    async addPayment(id: string, paymentId: string) : Promise< IPurchase | null >{
+        let purchase: IPurchase | null = null;
+
+        purchase = await this.purchaseRepository.addPayment(id, paymentId);
+
+        return purchase;
     }
 
     async create(purchase: IPurchase): Promise<IPurchase> {
 
         this.validate(purchase);
 
-        const createdPurchase = this.purchaseRepository.add(purchase);;
+        const createdPurchase = this.purchaseRepository.create(purchase);;
 
         return createdPurchase;
     }
@@ -44,7 +52,7 @@ export default class PurchaseService {
     }
 
     validate(purchase: IPurchase): void {
-        if (purchase.products?.length == 0)
+        if (purchase.cart == null)
             throw new InvalidArgumentException("Purchase products invalid.");
     }
 
