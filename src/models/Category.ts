@@ -1,50 +1,22 @@
-import { Optional, HasManyAddAssociationMixin, Model, Association, HasManyGetAssociationsMixin, DataTypes, Sequelize } from "sequelize";
-import { Product } from "./Product";
+import { IProduct } from "./Product";
+import mongoose, { Schema, Document } from 'mongoose';
 
-export interface CategoryAttributes {
-	id: number;
+export interface ICategory extends Document {
 	name: string;
+	products: IProduct[];
 }
 
-export interface CategoryCreationAttributes extends Optional<CategoryAttributes, "id"> { }
+const categorySchema = new Schema({
+	name: {
+		type: String,
+		required: true
+	},
+	products: [{
+		type: Schema.Types.ObjectId,
+		ref: "Product"
+	}]
+}, {
+	timestamps: { createdAt: true, updatedAt: true }
+})
 
-export class Category extends Model{
-    public id!: number;
-    public name!: string;
-
-    public products?: Product[];
-
-    public getProducts: HasManyGetAssociationsMixin<Product>;
-    public addProducts: HasManyAddAssociationMixin<Product, number>;
-
-    public static associations: {
-		products: Association<Product, Category>,
-	};
-}
-
-export const initCategory = (sequelize: Sequelize) => {
-	Category.init(
-		{
-			id: {
-				type: DataTypes.INTEGER.UNSIGNED,
-				autoIncrement: true,
-				primaryKey: true
-			},
-			name: {
-				type: new DataTypes.STRING(255),
-				allowNull: false,
-                unique: true
-			}
-		},
-		{
-			tableName: "Category",
-			timestamps: false,
-      		paranoid: true,
-			sequelize: sequelize
-		}
-	);
-}
-
-export const associateCategory = () => {
-	Category.hasMany(Product);
-};
+export default mongoose.model<ICategory>('Category', categorySchema);

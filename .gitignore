@@ -116,3 +116,6 @@ dist
 .pnp.*
 
 *.db
+
+mongo-volume/
+*.env

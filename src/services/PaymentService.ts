@@ -1,54 +1,46 @@
 import { InvalidArgumentException } from "@helpers/errors/InvalidArgumentException";
-import { Payment, PaymentAttributes, PaymentCreationAttributes } from "@models/Payment";
+import { IPayment } from "@models/Payment";
 import PaymentRepository from "@repositories/PaymentRepository";
 
 export default class PaymentService {
 
     public paymentRepository: PaymentRepository;
 
-    constructor(){
+    constructor() {
         this.paymentRepository = new PaymentRepository();
     }
 
-    async getById(id: number): Promise<Payment | null> {
+    async getById(id: string): Promise<IPayment | null> {
         const payment = await this.paymentRepository.getById(id);
 
         return payment;
     }
 
-    async getAll(): Promise<Payment[]> {
+    async getAll(): Promise<IPayment[]> {
         const payment = await this.paymentRepository.getAll();
 
         return payment;
     }
 
-    async create(payment: PaymentCreationAttributes): Promise<Payment> {
+    async create(payment: IPayment): Promise<IPayment> {
 
         this.validate(payment);
 
-        const createdPayment = this.paymentRepository.add(payment);;
+        const createdPayment = this.paymentRepository.create(payment);;
 
         return createdPayment;
     }
 
-    async update(id: number, updateData: Partial<PaymentCreationAttributes>): Promise<Payment|undefined> {        
-        const payment = await Payment.findByPk(id, { include: [{ all: true }] });
-        
-        if(payment == null) {
-            throw new InvalidArgumentException("Invalid payment identifier.");
-        }
-
-        let paymentData: PaymentCreationAttributes = {...payment, ...updateData} as PaymentCreationAttributes;
-        
+    async update(id: string, paymentData: IPayment): Promise<boolean> {
         this.validate(paymentData);
 
-        const updatedPayment = await this.paymentRepository.update(payment, updateData)
+        const updatedPayment = await this.paymentRepository.update(id, paymentData)
 
-        return updatedPayment;
+        return updatedPayment.ok == 1;
     }
 
-    validate(payment: PaymentCreationAttributes|PaymentAttributes): void{
-        if(payment.value <= 0)
+    validate(payment: IPayment): void {
+        if (payment.value <= 0)
             throw new InvalidArgumentException("Payment amount invalid.");
     }
 

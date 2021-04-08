@@ -1,30 +1,33 @@
 version: '3'
 
 services:
-  mix-management:
+  mixtura-app:
     build:
       context: .
       dockerfile: docker/Dockerfile.nodejs
-    command: nodemon --legacy-watch src/app.ts
-    image: mix-management
-    container_name: mix-management
+    command: nodemon --legacy-watch src/server.ts
+    image: mixtura-app
+    container_name: mixtura-app
     restart: unless-stopped
     env_file: .env
-    environment:
-      - DB_HOST=$DATABASE_HOST
-      - DB_DATABASE=$DATABASE_DB
-      - DB_USERNAME=$DATABASE_USERNAME
-      - DB_PASSWORD=$DATABASE_PASSWORD
-      - DB_ROOT_PASSWORD=$DATABASE_ROOT_PASSWORD
-      - DB_PORT=$DATABASE_PORT
-      - WAIT_HOSTS_TIMEOUT=300
-      - WAIT_SLEEP_INTERVAL=30
-      - WAIT_HOST_CONNECT_TIMEOUT=30
     ports:
-      - "8080:80"
+      - "80:80"
+      - "9229:9229"
     volumes:
       - .:/home/node/app
       - node_modules:/home/node/app/node_modules
+    networks:
+      - app-network
+  mixtura-data:
+    image: 'mongo:4.0.23'
+    container_name: mixtura-data
+    restart: always
+    env_file: db.env
+    ports:
+      - '27017:27017'
+    volumes:
+      - ./mongo-volume:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     networks:
       - app-network
 networks:
@@ -32,4 +35,5 @@ networks:
     driver: bridge
 
 volumes:
+  mongo-volume:
   node_modules:

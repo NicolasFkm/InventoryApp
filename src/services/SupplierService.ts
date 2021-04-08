@@ -1,5 +1,5 @@
 import { InvalidArgumentException } from "@helpers/errors/InvalidArgumentException";
-import { Supplier, SupplierAttributes, SupplierCreationAttributes } from "@models/Supplier";
+import Supplier, { ISupplier } from "@models/Supplier";
 import SupplierRepository from "@repositories/SupplierRepository";
 import validator from 'validator';
 
@@ -7,49 +7,41 @@ export default class SupplierService {
 
     public supplierRepository: SupplierRepository;
 
-    constructor(){
+    constructor() {
         this.supplierRepository = new SupplierRepository();
     }
 
-    async getById(id: number): Promise<Supplier | null> {
+    async getById(id: string): Promise<ISupplier | null> {
         const supplier = await this.supplierRepository.getById(id);
 
         return supplier;
     }
 
-    async getAll(): Promise<Supplier[]> {
+    async getAll(): Promise<ISupplier[]> {
         const supplier = await this.supplierRepository.getAll();
 
         return supplier;
     }
 
-    async create(supplier: SupplierCreationAttributes): Promise<Supplier> {
+    async create(supplier: ISupplier): Promise<ISupplier> {
 
         this.validate(supplier);
 
-        const createdSupplier = this.supplierRepository.add(supplier);;
+        const createdSupplier = this.supplierRepository.create(supplier);;
 
         return createdSupplier;
     }
 
-    async update(id: number, updateData: Partial<SupplierCreationAttributes>): Promise<Supplier|undefined> {        
-        const supplier = await Supplier.findByPk(id, { include: [{ all: true }] });
-        
-        if(supplier == null) {
-            throw new InvalidArgumentException("Invalid supplier identifier.");
-        }
-
-        let supplierData: SupplierCreationAttributes = {...supplier, ...updateData} as SupplierCreationAttributes;
-        
+    async update(id: string, supplierData: ISupplier): Promise<boolean> {
         this.validate(supplierData);
 
-        const updatedSupplier = await this.supplierRepository.update(supplier, updateData)
+        const updatedSupplier = await this.supplierRepository.update(id, supplierData)
 
-        return updatedSupplier;
+        return updatedSupplier.ok == 1;
     }
 
-    validate(supplier: SupplierCreationAttributes|SupplierAttributes): void{
-        if(validator.isEmpty(supplier.name!))
+    validate(supplier: ISupplier): void {
+        if (validator.isEmpty(supplier.name!))
             throw new InvalidArgumentException("Supplier name is invalid.");
     }
 

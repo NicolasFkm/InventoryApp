@@ -1,28 +1,29 @@
-import { Coupon, CouponCreationAttributes } from "@models/Coupon";
+import Coupon, { ICoupon } from "@models/Coupon";
+import { UpdateWriteOpResult } from "mongoose";
 
 export default class CouponRepository {
 
-    async getById(id: number): Promise<Coupon | null> {
-        const coupon = await Coupon.findByPk(id, { include: [{ all: true }] });
+    async getById(id: string): Promise<ICoupon | null> {
+        const coupon = await Coupon.findById(id);
 
         return coupon;
     }
 
-    async getAll(): Promise<Coupon[]> {
-        const coupon = await Coupon.findAll({ include: [{ all: true }] });
+    async getAll(): Promise<ICoupon[]> {
+        const coupon = await Coupon.find();
 
         return coupon;
     }
 
-    async add(coupon: CouponCreationAttributes): Promise<Coupon> {
+    async create(coupon: ICoupon): Promise<ICoupon> {
 
         const createdCoupon = await Coupon.create(coupon);
 
         return createdCoupon;
     }
 
-    async update(Coupon: Coupon, updateData: Partial<CouponCreationAttributes>): Promise<Coupon | undefined> {
-        const updatedCoupon = await Coupon?.update(updateData)
+    async update(id: string, coupon: ICoupon): Promise<UpdateWriteOpResult> {
+        const updatedCoupon = await Coupon.updateOne({ id }, coupon)
 
         return updatedCoupon;
     }

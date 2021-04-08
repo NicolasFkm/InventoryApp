@@ -1,42 +1,35 @@
-import { User, UserCreationAttributes } from "@models/User";
+import User, { IUser } from "@models/User";
+import { UpdateWriteOpResult } from "mongoose";
 
 export default class UserRepository {
 
-    async getById(id: number): Promise<User | null> {
-        const user = await User.findByPk(id, { include: [{ all: true }] });
-
+    async getById(id: string): Promise<IUser | null> {
+        const user = await User.findById(id)?.populate("order");
         return user;
     }
 
-    async getByEmail(email: string): Promise<User | null> {
+    async getByEmail(email: string): Promise<IUser | null> {
         const user = await User.findOne(
-            { 
-                where:{
-                    email
-                }, 
-                include: [{ 
-                    all: true 
-                }] 
-            });
+            { email });
 
         return user;
     }
 
-    async getAll(): Promise<User[]> {
-        const user = await User.findAll({ include: [{ all: true }] });
+    async getAll(): Promise<IUser[]> {
+        const user = await User.find();
 
         return user;
     }
 
-    async add(user: UserCreationAttributes): Promise<User> {
+    async create(user: IUser): Promise<IUser> {
 
         const createdUser = await User.create(user);
 
         return createdUser;
     }
 
-    async update(User: User, updateData: Partial<UserCreationAttributes>): Promise<User | undefined> {
-        const updatedUser = await User?.update(updateData)
+    async update(id: string, user: IUser): Promise<UpdateWriteOpResult> {
+        const updatedUser = await User.updateOne({ id }, user)
 
         return updatedUser;
     }

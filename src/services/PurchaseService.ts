@@ -1,54 +1,58 @@
 import { InvalidArgumentException } from "@helpers/errors/InvalidArgumentException";
-import { Purchase, PurchaseAttributes, PurchaseCreationAttributes } from "@models/Purchase";
+import { IProduct } from "@models/Product";
+import { IPurchase } from "@models/Purchase";
+import ProductRepository from "@repositories/ProductRepository";
 import PurchaseRepository from "@repositories/PurchaseRepository";
 
 export default class PurchaseService {
 
     public purchaseRepository: PurchaseRepository;
+    public productRepository: ProductRepository;
 
-    constructor(){
+    constructor() {
         this.purchaseRepository = new PurchaseRepository();
+        this.productRepository = new ProductRepository();
     }
 
-    async getById(id: number): Promise<Purchase | null> {
+    async getById(id: string): Promise<IPurchase | null> {
         const purchase = await this.purchaseRepository.getById(id);
 
         return purchase;
     }
 
-    async getAll(): Promise<Purchase[]> {
+    async getAll(): Promise<IPurchase[]> {
         const purchase = await this.purchaseRepository.getAll();
 
         return purchase;
     }
 
-    async create(purchase: PurchaseCreationAttributes): Promise<Purchase> {
+    async addPayment(id: string, paymentId: string) : Promise< IPurchase | null >{
+        let purchase: IPurchase | null = null;
+
+        purchase = await this.purchaseRepository.addPayment(id, paymentId);
+
+        return purchase;
+    }
+
+    async create(purchase: IPurchase): Promise<IPurchase> {
 
         this.validate(purchase);
 
-        const createdPurchase = this.purchaseRepository.add(purchase);;
+        const createdPurchase = this.purchaseRepository.create(purchase);;
 
         return createdPurchase;
     }
 
-    async update(id: number, updateData: Partial<PurchaseCreationAttributes>): Promise<Purchase|undefined> {        
-        const purchase = await Purchase.findByPk(id, { include: [{ all: true }] });
-        
-        if(purchase == null) {
-            throw new InvalidArgumentException("Invalid purchase identifier.");
-        }
-
-        let purchaseData: PurchaseCreationAttributes = {...purchase, ...updateData} as PurchaseCreationAttributes;
-        
+    async update(id: string, purchaseData: IPurchase): Promise<boolean> {
         this.validate(purchaseData);
 
-        const updatedPurchase = await this.purchaseRepository.update(purchase, updateData)
+        const updatedPurchase = await this.purchaseRepository.update(id, purchaseData);
 
-        return updatedPurchase;
+        return updatedPurchase.ok == 1;
     }
 
-    validate(purchase: PurchaseCreationAttributes|PurchaseAttributes): void{
-        if(purchase.products?.length == 0)
+    validate(purchase: IPurchase): void {
+        if (purchase.cart == null)
             throw new InvalidArgumentException("Purchase products invalid.");
     }
 

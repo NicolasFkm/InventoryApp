@@ -1,5 +1,5 @@
 import { InvalidArgumentException } from "@helpers/errors/InvalidArgumentException";
-import { Product, ProductAttributes, ProductCreationAttributes } from "@models/Product";
+import { IProduct } from "@models/Product";
 import ProductRepository from "@repositories/ProductRepository";
 import validator from 'validator';
 
@@ -7,59 +7,61 @@ export default class ProductService {
 
     public productRepository: ProductRepository;
 
-    constructor(){
+    constructor() {
         this.productRepository = new ProductRepository();
     }
 
-    async getById(id: number): Promise<Product | null> {
+    async getById(id: string): Promise<IProduct | null> {
         const product = await this.productRepository.getById(id);
 
         return product;
     }
 
-    async getAll(): Promise<Product[]> {
+    async getAll(): Promise<IProduct[]> {
         const product = await this.productRepository.getAll();
 
         return product;
     }
 
-    async create(product: ProductCreationAttributes): Promise<Product> {
+    async create(product: IProduct): Promise<IProduct> {
 
         this.validate(product);
 
-        const createdProduct = this.productRepository.add(product);;
+        const createdProduct = this.productRepository.create(product);;
 
         return createdProduct;
     }
 
-    async update(id: number, updateData: Partial<ProductCreationAttributes>): Promise<Product|undefined> {        
-        const product = await Product.findByPk(id, { include: [{ all: true }] });
-        
-        if(product == null) {
-            throw new InvalidArgumentException("Invalid product identifier.");
+    async addPurchase(id: string, purchaseId: string, quantity: number = 1) : Promise< IProduct | null >{
+        let product: IProduct | null = null;
+
+        for (let index = 0; index < quantity; index++) {
+            product = await this.productRepository.addPurchase(id, purchaseId);
         }
 
-        let productData: ProductCreationAttributes = {...product, ...updateData} as ProductCreationAttributes;
-        
-        this.validate(productData);
-
-        const updatedProduct = await this.productRepository.update(product, updateData)
-
-        return updatedProduct;
+        return product;
     }
 
-    validate(product: ProductCreationAttributes|ProductAttributes): void{
-        
-        if(validator.isEmpty(product.name!))
+    async update(id: string, productData: IProduct): Promise<boolean> {
+        this.validate(productData);
+
+        const updatedProduct = await this.productRepository.update(id, productData)
+
+        return updatedProduct.ok == 1;
+    }
+
+    validate(product: IProduct): void {
+
+        if (validator.isEmpty(product.name!))
             throw new InvalidArgumentException("Product name is invalid.");
-        
-        if(product.price < 0)
+
+        if (product.price < 0)
             throw new InvalidArgumentException("Product price invalid.");
-        
-        if(product.costPrice < 0)
+
+        if (product.costPrice < 0)
             throw new InvalidArgumentException("Product cost price invalid.");
-        
-        if(product.quantity < 0)
+
+        if (product.quantity < 0)
             throw new InvalidArgumentException("Product quantity invalid.");
     }
 

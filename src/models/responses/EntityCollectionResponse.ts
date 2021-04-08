@@ -1,10 +1,10 @@
-import { Model } from "sequelize";
+import { Document } from "mongoose";
 import ResponseBody from './ResponseBody';
 
 export default class EntityCollectionResponse extends ResponseBody {
-    public data: Model[];
+    public data: Document[];
 
-    constructor(data: Model[], link: string){
+    constructor(data: Document[], link: string){
         super(link);
         this.data = data;
     }

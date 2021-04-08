@@ -1,28 +1,30 @@
-import { Category, CategoryCreationAttributes } from "@models/Category";
+import Category, { ICategory } from "@models/Category";
+import { UpdateWriteOpResult } from "mongoose";
 
 export default class CategoryRepository {
 
-    async getById(id: number): Promise<Category | null> {
-        const category = await Category.findByPk(id, { include: [{ all: true }] });
+    async getById(id: string): Promise<ICategory | null> {
+        const category = await Category.findById(id)
+            .populate("products")
 
         return category;
     }
 
-    async getAll(): Promise<Category[]> {
-        const category = await Category.findAll({ include: [{ all: true }] });
+    async getAll(): Promise<ICategory[]> {
+        const category = await Category.find()
 
         return category;
     }
 
-    async add(category: CategoryCreationAttributes): Promise<Category> {
+    async create(category: ICategory): Promise<ICategory> {
 
         const createdCategory = await Category.create(category);
 
         return createdCategory;
     }
 
-    async update(Category: Category, updateData: Partial<CategoryCreationAttributes>): Promise<Category | undefined> {
-        const updatedCategory = await Category?.update(updateData)
+    async update(id: string, category: ICategory): Promise<UpdateWriteOpResult> {
+        const updatedCategory = await Category.updateOne({ id }, category)
 
         return updatedCategory;
     }

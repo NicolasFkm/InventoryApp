@@ -1,5 +1,5 @@
 import { InvalidArgumentException } from "@helpers/errors/InvalidArgumentException";
-import { Category, CategoryAttributes, CategoryCreationAttributes } from "@models/Category";
+import { ICategory } from "@models/Category";
 import CategoryRepository from "@repositories/CategoryRepository";
 import validator from 'validator';
 
@@ -7,49 +7,41 @@ export default class CategoryService {
 
     public categoryRepository: CategoryRepository;
 
-    constructor(){
+    constructor() {
         this.categoryRepository = new CategoryRepository();
     }
 
-    async getById(id: number): Promise<Category | null> {
+    async getById(id: string): Promise<ICategory | null> {
         const category = await this.categoryRepository.getById(id);
 
         return category;
     }
 
-    async getAll(): Promise<Category[]> {
+    async getAll(): Promise<ICategory[]> {
         const category = await this.categoryRepository.getAll();
 
         return category;
     }
 
-    async create(category: CategoryCreationAttributes): Promise<Category> {
+    async create(category: ICategory): Promise<ICategory> {
 
         this.validate(category);
 
-        const createdCategory = this.categoryRepository.add(category);;
+        const createdCategory = this.categoryRepository.create(category);;
 
         return createdCategory;
     }
 
-    async update(id: number, updateData: Partial<CategoryCreationAttributes>): Promise<Category|undefined> {        
-        const category = await Category.findByPk(id, { include: [{ all: true }] });
-        
-        if(category == null) {
-            throw new InvalidArgumentException("Invalid category identifier.");
-        }
+    async update(id: string, updateCategory: ICategory): Promise<boolean> {
+        this.validate(updateCategory);
 
-        let categoryData: CategoryCreationAttributes = {...category, ...updateData} as CategoryCreationAttributes;
-        
-        this.validate(categoryData);
+        const updatedCategory = await this.categoryRepository.update(id, updateCategory)
 
-        const updatedCategory = await this.categoryRepository.update(category, updateData)
-
-        return updatedCategory;
+        return updatedCategory.ok == 1;
     }
 
-    validate(category: CategoryCreationAttributes|CategoryAttributes): void{
-        if(validator.isEmpty(category.name!))
+    validate(category: ICategory): void {
+        if (validator.isEmpty(category.name!))
             throw new InvalidArgumentException("Category name is invalid.");
     }
 
