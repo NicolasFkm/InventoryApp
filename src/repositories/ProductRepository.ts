@@ -10,8 +10,8 @@ export default class ProductRepository {
         const product = await Product.findById(id)
             .populate("category")
             .populate("supplier")
-            .populate("purchases")
-            .populate("orders");
+            .populate("purchases");
+            // .populate("orders");
 
         return product;
     }

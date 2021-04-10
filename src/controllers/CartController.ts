@@ -5,10 +5,11 @@ import { ICart } from '@models/Cart';
 import { CartItemAttributes } from '@models/CartItem';
 import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
+import UserRepository from '@repositories/UserRepository';
 import CartService from '@services/CartService';
 import ProductService from '@services/ProductService';
 import UserService from '@services/UserService';
-import { Response, Request } from 'express';
+import { Response, Request, NextFunction, RequestHandler } from 'express';
 
 export default class CartController {
 
@@ -22,80 +23,56 @@ export default class CartController {
         this.productService = new ProductService();
     }
 
-    public postCreate = async (req: Request, res: Response): Promise<Response> => {
-        try {
-            let { userId }: { userId: string } = req.body;
-
-            const user = await this.userService.getById(userId);
-
-            const cart = { user } as ICart;
-
-            const createdCart = await this.cartService.create(cart);
-
-            let response = new EntityResponse(createdCart, req.url);
-
-            let responseStatus = HttpStatus.SUCCESS;
-
-            return res.status(responseStatus).send(response);
-        }
-        catch (error) {
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-
-            if (error instanceof InvalidArgumentException) {
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
-
-            return res.status(status).send(errorResponse);
-        }
-    }
-
-    public putUpdateCartItem = async (req: Request, res: Response): Promise<Response> => {
+    public putUpdateCartItem: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             let { id } = req.params;
-            let { item }: { item: CartItemAttributes } = req.body;
+            let { quantity, product }: CartItemAttributes = req.body;
 
-            let cart = await this.cartService.getById(id);
+            let item = new CartItemAttributes();
+            item.product = product;
+            item.quantity = quantity;
 
-            if (item.quantity == 0) {
-                cart = await this.cartService.removeItem(id, item);
+            let user = await this.userService.getById(id);
+
+            if(user == null) {
+                throw new DataNotFoundException();
             }
-            else if (cart?.items.some(item => item.productId == item.productId)) {
-                cart = await this.cartService.updateCartItem(id, item);
+            
+            user.cart = user.cart!.populate("items");
+            
+            if (quantity == 0) {
+                user.cart = await this.cartService.removeItem(user.cart.id, item);
+            }
+            else if (user.cart.items?.some(_ => _.product == item.product)) {
+                user.cart = await this.cartService.updateCartItem(user.cart!.id, item);
             }
             else {
-                cart = await this.cartService.addItem(id, item);
+                user.cart = await this.cartService.addItem(user.cart!._id, item);
             }
 
-            if (cart == null) {
+            if (user.cart == null) {
                 throw new DataNotFoundException();
             }
 
-            let response = new EntityResponse(cart, req.url);
+            user.save();
+
+            let response = new EntityResponse(user.cart, req.url);
 
             let status = HttpStatus.SUCCESS;
 
             return res.status(status).send(response);
         }
         catch (error) {
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-
-            if (error instanceof InvalidArgumentException) {
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
-
-            return res.status(status).send(errorResponse);
+            next(error);
         }
     }
 
-    public putClearCart = async (req: Request, res: Response): Promise<Response> => {
+    public deleteClearCart: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             let { id } = req.params;
+            let user = await this.userService.getById(id);
 
-            const cart = await this.cartService.clear(id);
+            const cart = await this.cartService.clear(user?.cart!.id);
 
             if (cart == null) {
                 throw new DataNotFoundException();
@@ -108,54 +85,28 @@ export default class CartController {
             return res.status(status).send(response);
         }
         catch (error) {
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-
-            if (error instanceof InvalidArgumentException) {
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
-
-            if (error instanceof DataNotFoundException) {
-                status = HttpStatus.NOT_FOUND;
-                errorResponse.message = error.message;
-            }
-
-            return res.status(status).send(errorResponse);
+            next(error);
         }
     }
 
-    public getById = async (req: Request, res: Response): Promise<Response> => {
+    public getByUserId: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             let { id } = req.params;
 
-            const cart = await this.cartService.getById(id);
+            const user = await this.userService.getById(id);
 
-            if (cart == null) {
+            if (user == null) {
                 throw new DataNotFoundException();
             }
 
-            let response = new EntityResponse(cart, req.url);
+            let response = new EntityResponse(user.cart!, req.url);
 
             let status = HttpStatus.SUCCESS;
 
             return res.status(status).send(response);
         }
         catch (error) {
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-
-            if (error instanceof InvalidArgumentException) {
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
-
-            if (error instanceof DataNotFoundException) {
-                status = HttpStatus.NOT_FOUND;
-                errorResponse.message = error.message;
-            }
-
-            return res.status(status).send(errorResponse);
+            next(error);
         }
     }
 

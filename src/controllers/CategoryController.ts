@@ -6,7 +6,7 @@ import EntityCollectionResponse from '@models/responses/EntityCollectionResponse
 import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
 import CategoryService from '@services/CategoryService';
-import { Response, Request } from 'express';
+import { Response, Request, NextFunction } from 'express';
 
 export default class CategoryController {
 
@@ -16,7 +16,7 @@ export default class CategoryController {
         this.categoryService = new CategoryService();;
     }
 
-    public postCreate = async (req: Request, res: Response): Promise<Response> => {
+    public postCreate = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             let { name }: { name: string } = req.body;
 
@@ -31,19 +31,11 @@ export default class CategoryController {
             return res.status(responseStatus).send(response);
         }
         catch (error) {
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-
-            if (error instanceof InvalidArgumentException) {
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
-
-            return res.status(status).send(errorResponse);
+            next(error)
         }
     }
 
-    public getAll = async (req: Request, res: Response): Promise<Response> => {
+    public getAll = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             const categories = await this.categoryService.getAll();
 
@@ -66,7 +58,7 @@ export default class CategoryController {
         }
     }
 
-    public getById = async (req: Request, res: Response): Promise<Response> => {
+    public getById = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             let { id } = req.params;
 

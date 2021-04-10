@@ -4,7 +4,7 @@ import { UpdateWriteOpResult } from "mongoose";
 export default class UserRepository {
 
     async getById(id: string): Promise<IUser | null> {
-        const user = await User.findById(id)?.populate("order");
+        const user = await User.findById(id)?.populate("order").populate("cart");
         return user;
     }
 

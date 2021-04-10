@@ -6,18 +6,22 @@ import EntityCollectionResponse from '@models/responses/EntityCollectionResponse
 import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
 import UserService from '@services/UserService';
-import { Response, Request } from 'express';
+import { Response, Request, NextFunction } from 'express';
 import StatusResponse from '@models/responses/StatusResponse';
+import CartService from '@services/CartService';
+import { ICart } from '@models/Cart';
 
 export default class UserController {
 
     public userService: UserService;
+    public cartService: CartService;
 
     constructor() {
-        this.userService = new UserService();;
+        this.userService = new UserService();
+        this.cartService = new CartService();
     }
 
-    public postCreate = async (req: Request, res: Response): Promise<Response> => {
+    public postCreate = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             let { name, username, email, password, role }: { name: string, username: string, email: string, password: string, role: number } = req.body;
 
@@ -29,28 +33,28 @@ export default class UserController {
                 role
             } as IUser;
 
-            const createdAccount = await this.userService.create(account);
+            const user = await this.userService.create(account);
 
-            let response = new EntityResponse(createdAccount, req.url);
+            const cart = { } as ICart;
+
+            const createdCart = await this.cartService.create(cart);
+
+            user.cart = createdCart!;
+
+            user.save();
+
+            let response = new EntityResponse(user, req.url);
 
             let status = HttpStatus.SUCCESS;
 
             return res.status(status).send(response);
         }
         catch (error) {
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-
-            if (error instanceof InvalidArgumentException) {
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
-
-            return res.status(status).send(errorResponse);
+            next(error);
         }
     }
 
-    public getAll = async (req: Request, res: Response): Promise<Response> => {
+    public getAll = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             const createdAccount = await this.userService.getAll();
 
@@ -61,20 +65,11 @@ export default class UserController {
             return res.status(status).send(response);
         }
         catch (error) {
-            console.log(error);
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-
-            if (error instanceof InvalidArgumentException) {
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
-
-            return res.status(status).send(errorResponse);
+            next(error);
         }
     }
 
-    public getById = async (req: Request, res: Response): Promise<Response> => {
+    public getById = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             let { id } = req.params;
 
@@ -91,24 +86,11 @@ export default class UserController {
             return res.status(status).send(response);
         }
         catch (error) {
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-
-            if (error instanceof InvalidArgumentException) {
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
-
-            if (error instanceof DataNotFoundException) {
-                status = HttpStatus.NOT_FOUND;
-                errorResponse.message = error.message;
-            }
-
-            return res.status(status).send(errorResponse);
+            next(error);
         }
     }
 
-    public putUpdateUser = async (req: Request, res: Response): Promise<Response> => {
+    public putUpdateUser = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             let { id } = req.params;
             let { name, username, email, role }: { name: string, username: string, email: string, role: number } = req.body;
@@ -133,22 +115,7 @@ export default class UserController {
             return res.status(status).send(response);
         }
         catch (error) {
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-
-            if (error instanceof InvalidArgumentException) {
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
-
-            if (error instanceof DataNotFoundException) {
-                status = HttpStatus.NOT_FOUND;
-                errorResponse.message = error.message;
-            }
-
-            console.log(error)
-
-            return res.status(status).send(errorResponse);
+            next(error);
         }
     }
 

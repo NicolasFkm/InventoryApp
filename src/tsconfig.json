@@ -26,6 +26,7 @@
         "@repositories/*": ["repositories/*"],
         "@models/*": ["models/*"],
         "@routes/*": ["routes/*"],
+        "@middlewares/*": ["middlewares/*"],
         "@services/*": ["services/*"],
         "@helpers/*": ["helpers/*"],
         "@utils/*": ["utils/*"]

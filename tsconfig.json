@@ -25,6 +25,7 @@
         "@controllers/*": ["controllers/*"],
         "@repositories/*": ["repositories/*"],
         "@models/*": ["models/*"],
+        "@middlewares/*": ["middlewares/*"],
         "@routes/*": ["routes/*"],
         "@services/*": ["services/*"],
         "@helpers/*": ["helpers/*"],

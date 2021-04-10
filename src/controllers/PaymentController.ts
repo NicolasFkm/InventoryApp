@@ -6,7 +6,7 @@ import EntityCollectionResponse from '@models/responses/EntityCollectionResponse
 import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
 import PaymentService from '@services/PaymentService';
-import { Response, Request } from 'express';
+import { Response, Request, NextFunction } from 'express';
 
 export default class PaymentController {
 
@@ -16,7 +16,7 @@ export default class PaymentController {
         this.paymentService = new PaymentService();
     }
 
-    public postCreate = async (req: Request, res: Response): Promise<Response> => {
+    public postCreate = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             let { type, installments, value }: { type: number, installments: number | undefined, value: number } = req.body;
 
@@ -33,19 +33,11 @@ export default class PaymentController {
             return res.status(responseStatus).send(response);
         }
         catch (error) {
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-
-            if (error instanceof InvalidArgumentException) {
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
-
-            return res.status(status).send(errorResponse);
+            next(error);
         }
     }
 
-    public getAll = async (req: Request, res: Response): Promise<Response> => {
+    public getAll = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             const payments = await this.paymentService.getAll();
 
@@ -56,19 +48,11 @@ export default class PaymentController {
             return res.status(status).send(response);
         }
         catch (error) {
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-
-            if (error instanceof InvalidArgumentException) {
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
-
-            return res.status(status).send(errorResponse);
+            next(error);
         }
     }
 
-    public getById = async (req: Request, res: Response): Promise<Response> => {
+    public getById = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             let { id } = req.params;
 
@@ -85,20 +69,7 @@ export default class PaymentController {
             return res.status(status).send(response);
         }
         catch (error) {
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-
-            if (error instanceof InvalidArgumentException) {
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
-
-            if (error instanceof DataNotFoundException) {
-                status = HttpStatus.NOT_FOUND;
-                errorResponse.message = error.message;
-            }
-
-            return res.status(status).send(errorResponse);
+            next(error);
         }
     }
 

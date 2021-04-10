@@ -1,4 +1,4 @@
 export class CartItemAttributes {
 	quantity: number;
-	productId: string;
+	product: string;
 }

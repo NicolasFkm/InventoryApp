@@ -7,7 +7,7 @@ import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
 import ProductService from '@services/ProductService';
 import SupplierService from '@services/SupplierService';
-import { Response, Request } from 'express';
+import { Response, Request, NextFunction } from 'express';
 
 export default class ProductController {
 
@@ -19,22 +19,20 @@ export default class ProductController {
         this.supplierService = new SupplierService();;
     }
 
-    public postCreate = async (req: Request, res: Response): Promise<Response> => {
+    public postCreate = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             let { name, price, costPrice, description, quantity, status, barcode, supplierId }:
                 { name: string, price: number, costPrice: number, description: string | undefined, quantity: number, status: number, barcode: string | undefined, supplierId: string | undefined } = req.body;
-
+            
             const product = { name, price, costPrice, description, quantity, status, barcode } as IProduct;
+            const supplier = await this.supplierService.getById(supplierId!);
+            
+            if (supplier != undefined && supplier != null) {
+                product.supplier = supplier!;
+            }
 
             const createdProduct = await this.productService.create(product);
 
-            if (supplierId != undefined) {
-                const supplier = await this.supplierService.getById(supplierId);
-                if (supplier) {
-                    // supplier.addProduct(createdProduct!);
-                    // supplier?.save();
-                }
-            }
 
             let response = new EntityResponse(createdProduct, req.url);
 
@@ -43,19 +41,11 @@ export default class ProductController {
             return res.status(responseStatus).send(response);
         }
         catch (error) {
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-
-            if (error instanceof InvalidArgumentException) {
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
-
-            return res.status(status).send(errorResponse);
+            next(error);
         }
     }
 
-    public getAll = async (req: Request, res: Response): Promise<Response> => {
+    public getAll = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             const products = await this.productService.getAll();
 
@@ -66,19 +56,11 @@ export default class ProductController {
             return res.status(status).send(response);
         }
         catch (error) {
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-
-            if (error instanceof InvalidArgumentException) {
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
-
-            return res.status(status).send(errorResponse);
+            next(error);
         }
     }
 
-    public getById = async (req: Request, res: Response): Promise<Response> => {
+    public getById = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             let { id } = req.params;
 
@@ -95,20 +77,7 @@ export default class ProductController {
             return res.status(status).send(response);
         }
         catch (error) {
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-
-            if (error instanceof InvalidArgumentException) {
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
-
-            if (error instanceof DataNotFoundException) {
-                status = HttpStatus.NOT_FOUND;
-                errorResponse.message = error.message;
-            }
-
-            return res.status(status).send(errorResponse);
+            next(error);
         }
     }
 

@@ -6,7 +6,7 @@ import EntityCollectionResponse from '@models/responses/EntityCollectionResponse
 import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
 import SupplierService from '@services/SupplierService';
-import { Response, Request } from 'express';
+import { Response, Request, NextFunction } from 'express';
 
 export default class SupplierController {
 
@@ -16,7 +16,7 @@ export default class SupplierController {
         this.supplierService = new SupplierService();;
     }
 
-    public postCreate = async (req: Request, res: Response): Promise<Response> => {
+    public postCreate = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             let { name, address, city, state, zipCode }: { name: string, address: string | undefined, city: string | undefined, state: string | undefined, zipCode: string | undefined } = req.body;
 
@@ -31,19 +31,11 @@ export default class SupplierController {
             return res.status(responseStatus).send(response);
         }
         catch (error) {
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-
-            if (error instanceof InvalidArgumentException) {
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
-
-            return res.status(status).send(errorResponse);
+            next(error);
         }
     }
 
-    public getAll = async (req: Request, res: Response): Promise<Response> => {
+    public getAll = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             const suppliers = await this.supplierService.getAll();
 
@@ -54,19 +46,11 @@ export default class SupplierController {
             return res.status(status).send(response);
         }
         catch (error) {
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-
-            if (error instanceof InvalidArgumentException) {
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
-
-            return res.status(status).send(errorResponse);
+            next(error);
         }
     }
 
-    public getById = async (req: Request, res: Response): Promise<Response> => {
+    public getById = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             let { id } = req.params;
 
@@ -83,20 +67,7 @@ export default class SupplierController {
             return res.status(status).send(response);
         }
         catch (error) {
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-
-            if (error instanceof InvalidArgumentException) {
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
-
-            if (error instanceof DataNotFoundException) {
-                status = HttpStatus.NOT_FOUND;
-                errorResponse.message = error.message;
-            }
-
-            return res.status(status).send(errorResponse);
+            next(error);
         }
     }
 

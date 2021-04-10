@@ -1,13 +1,21 @@
 import { DataNotFoundException } from "@helpers/errors/DataNotFoundException";
 import Cart, { ICart } from "@models/Cart";
 import { CartItemAttributes } from "@models/CartItem";
+import { IUser } from "@models/User";
 import { UpdateWriteOpResult } from "mongoose";
 
 export default class CategoryRepository {
 
     async getById(id: string): Promise<ICart | null> {
-        const cart = await Cart.findById(id)
-            .populate("products")
+        let cart = await Cart.findById(id)
+            .populate("Product")
+
+        return cart;
+    }
+
+    async getByUserId(user: IUser): Promise<ICart | null> {
+        let cart = await Cart.findOne({ user })
+            .populate("Product")
 
         return cart;
     }
@@ -41,7 +49,7 @@ export default class CategoryRepository {
     async removeItem(id: string, productId: string): Promise<ICart | null> {
 
         const cart = await Cart.findByIdAndUpdate(id,
-            { $pull: { items: { productId: productId } } },
+            { $pull: { items: { product: productId } } },
             { new: true, useFindAndModify: false });
 
         if (cart == null) {
@@ -60,7 +68,7 @@ export default class CategoryRepository {
         }
 
         cart.items = cart?.items.map(item => {
-            if(item.productId != cartItem.productId)
+            if(item.product != cartItem.product)
                 return item;
             
             item.quantity = cartItem.quantity;
