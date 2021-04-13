@@ -1,4 +1,5 @@
 import { InvalidArgumentException } from "@helpers/errors/InvalidArgumentException";
+import { IPayment } from "@models/Payment";
 import { IProduct } from "@models/Product";
 import { IPurchase } from "@models/Purchase";
 import ProductRepository from "@repositories/ProductRepository";
@@ -26,12 +27,12 @@ export default class PurchaseService {
         return purchase;
     }
 
-    async addPayment(id: string, paymentId: string) : Promise< IPurchase | null >{
-        let purchase: IPurchase | null = null;
+    async addPayment(id: string, paymentId: string) : Promise<IPayment | null >{
+        let payment: IPayment | null = null;
 
-        purchase = await this.purchaseRepository.addPayment(id, paymentId);
+        payment = await this.purchaseRepository.addPayment(id, paymentId);
 
-        return purchase;
+        return payment;
     }
 
     async create(purchase: IPurchase): Promise<IPurchase> {

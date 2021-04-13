@@ -1,10 +1,8 @@
 import { HttpStatus } from '@enumerators/HttpStatus';
 import { DataNotFoundException } from '@helpers/errors/DataNotFoundException';
-import { InvalidArgumentException } from '@helpers/errors/InvalidArgumentException';
 import { IUser } from '@models/User';
 import EntityCollectionResponse from '@models/responses/EntityCollectionResponse';
 import EntityResponse from '@models/responses/EntityResponse';
-import ErrorResponse from '@models/responses/ErrorResponse';
 import UserService from '@services/UserService';
 import { Response, Request, NextFunction } from 'express';
 import StatusResponse from '@models/responses/StatusResponse';
@@ -45,7 +43,7 @@ export default class UserController {
 
             let response = new EntityResponse(user, req.url);
 
-            let status = HttpStatus.SUCCESS;
+            let status = HttpStatus.CREATED;
 
             return res.status(status).send(response);
         }
@@ -96,8 +94,8 @@ export default class UserController {
             let { name, username, email, role }: { name: string, username: string, email: string, role: number } = req.body;
 
             const user = {
-                name: name,
-                username: username.toLowerCase(),
+                name,
+                username,
                 email: email.toLowerCase(),
                 role
             } as IUser;

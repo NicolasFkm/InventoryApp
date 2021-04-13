@@ -21,18 +21,6 @@ export default class CartService {
         return cart;
     }
 
-    async getByUserId(id: string): Promise<ICart | null> {
-        const user = await this.userService.getById(id);
-
-        if (user == null) {
-            throw new DataNotFoundException("User does not exist");
-        }
-
-        const cart = await this.cartRepository.getByUserId(user);
-
-        return cart;
-    }
-
     async getAll(): Promise<ICart[]> {
         const cart = await this.cartRepository.getAll();
 

@@ -13,13 +13,6 @@ export default class CategoryRepository {
         return cart;
     }
 
-    async getByUserId(user: IUser): Promise<ICart | null> {
-        let cart = await Cart.findOne({ user })
-            .populate("Product")
-
-        return cart;
-    }
-
     async getAll(): Promise<ICart[]> {
         const cart = await Cart.find()
 

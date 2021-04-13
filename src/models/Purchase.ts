@@ -4,7 +4,7 @@ import { IProduct } from "./Product";
 import { ICart } from "./Cart";
 
 export interface IPurchase extends Document {
-	payments?: IPayment[];
+	payments: (IPayment|null)[];
 	cart: ICart;
 }
 

@@ -28,7 +28,7 @@ export default class PaymentController {
 
             let response = new EntityResponse(createdPayment, req.url);
 
-            let responseStatus = HttpStatus.SUCCESS;
+            let responseStatus = HttpStatus.CREATED;
 
             return res.status(responseStatus).send(response);
         }

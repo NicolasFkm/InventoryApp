@@ -26,7 +26,31 @@ export default class SupplierController {
 
             let response = new EntityResponse(createdSupplier, req.url);
 
-            let responseStatus = HttpStatus.SUCCESS;
+            let responseStatus = HttpStatus.CREATED;
+
+            return res.status(responseStatus).send(response);
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+
+    public putUpdate = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
+        try {
+            let { id } = req.params;
+            let { name, address, city, state, zipCode }: { name: string, address: string | undefined, city: string | undefined, state: string | undefined, zipCode: string | undefined } = req.body;
+
+            const supplier = { name, address, city, state, zipCode } as ISupplier;
+
+            const updatedSupplier = await this.supplierService.update(id, supplier);
+
+            if(updatedSupplier){
+                throw new DataNotFoundException();
+            }
+
+            let response = new EntityResponse(supplier, req.url);
+
+            let responseStatus = HttpStatus.CREATED;
 
             return res.status(responseStatus).send(response);
         }

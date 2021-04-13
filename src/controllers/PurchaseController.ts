@@ -36,16 +36,18 @@ export default class PurchaseController {
 
             const createdPurchase = await this.purchaseService.create(purchase);
 
-            await Promise.all(paymentIds.map(async (id) => {
-                let purchase = this.purchaseService.addPayment(createdPurchase.id, id);
-                return purchase;
+            let payments = await Promise.all(paymentIds.map(async (id) => {
+                let payment = this.purchaseService.addPayment(createdPurchase.id, id);
+                return payment;
             }));
 
-            createdPurchase.save();
+            createdPurchase.payments = payments;
+
+            this.cartService.clear(cartId);
 
             let response = new EntityResponse(createdPurchase, req.url);
 
-            let responseStatus = HttpStatus.SUCCESS;
+            let responseStatus = HttpStatus.CREATED;
 
             return res.status(responseStatus).send(response);
         }

@@ -5,6 +5,7 @@ import { IProduct } from '@models/Product';
 import EntityCollectionResponse from '@models/responses/EntityCollectionResponse';
 import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
+import CategoryService from '@services/CategoryService';
 import ProductService from '@services/ProductService';
 import SupplierService from '@services/SupplierService';
 import { Response, Request, NextFunction } from 'express';
@@ -13,16 +14,18 @@ export default class ProductController {
 
     public productService: ProductService;
     public supplierService: SupplierService;
+    public categoryService: CategoryService;
 
     constructor() {
         this.productService = new ProductService();;
         this.supplierService = new SupplierService();;
+        this.categoryService = new CategoryService();;
     }
 
     public postCreate = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
-            let { name, price, costPrice, description, quantity, status, barcode, supplierId }:
-                { name: string, price: number, costPrice: number, description: string | undefined, quantity: number, status: number, barcode: string | undefined, supplierId: string | undefined } = req.body;
+            let { name, price, costPrice, description, quantity, status, barcode, supplierId, categoryId }:
+                { name: string, price: number, costPrice: number, description: string | undefined, quantity: number, status: number, barcode: string | undefined, supplierId: string | undefined, categoryId: string | undefined } = req.body;
             
             const product = { name, price, costPrice, description, quantity, status, barcode } as IProduct;
             const supplier = await this.supplierService.getById(supplierId!);
@@ -30,13 +33,44 @@ export default class ProductController {
             if (supplier != undefined && supplier != null) {
                 product.supplier = supplier!;
             }
+            
+            const category = await this.categoryService.getById(categoryId!);
+            
+            if (category != undefined && category != null) {
+                product.category = category!;
+            }
 
             const createdProduct = await this.productService.create(product);
 
 
             let response = new EntityResponse(createdProduct, req.url);
 
-            let responseStatus = HttpStatus.SUCCESS;
+            let responseStatus = HttpStatus.CREATED;
+
+            return res.status(responseStatus).send(response);
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+
+    public putUpdate = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
+        try {
+            let { id } = req.params;
+            let { name, price, costPrice, description, quantity, status, barcode, supplierId, categoryId }:
+                { name: string, price: number, costPrice: number, description: string | undefined, quantity: number, status: number, barcode: string | undefined, supplierId: string | undefined, categoryId: string | undefined } = req.body;
+            
+            const product = { name, price, costPrice, description, quantity, status, barcode, supplier: supplierId, category: categoryId } as IProduct;
+            
+            const updatedProduct = await this.productService.update(id, product);
+
+            if(updatedProduct){
+                throw new DataNotFoundException();
+            }
+
+            let response = new EntityResponse(product, req.url);
+
+            let responseStatus = HttpStatus.CREATED;
 
             return res.status(responseStatus).send(response);
         }

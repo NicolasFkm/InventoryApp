@@ -26,12 +26,36 @@ export default class CategoryController {
 
             let response = new EntityResponse(createdCategory, req.url);
 
-            let responseStatus = HttpStatus.SUCCESS;
+            let responseStatus = HttpStatus.CREATED;
 
             return res.status(responseStatus).send(response);
         }
         catch (error) {
-            next(error)
+            next(error);
+        }
+    }
+
+    public putUpdate = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
+        try {
+            let { id } = req.params;
+            let { name }: { name: string } = req.body;
+
+            const category = { name } as ICategory;
+
+            const updatedCategory = await this.categoryService.update(id, category);
+
+            if(updatedCategory){
+                throw new DataNotFoundException();
+            }
+
+            let response = new EntityResponse(category, req.url);
+
+            let responseStatus = HttpStatus.CREATED;
+
+            return res.status(responseStatus).send(response);
+        }
+        catch (error) {
+            next(error);
         }
     }
 
@@ -46,15 +70,7 @@ export default class CategoryController {
             return res.status(status).send(response);
         }
         catch (error) {
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-
-            if (error instanceof InvalidArgumentException) {
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
-
-            return res.status(status).send(errorResponse);
+            next(error);
         }
     }
 
@@ -75,20 +91,7 @@ export default class CategoryController {
             return res.status(status).send(response);
         }
         catch (error) {
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-
-            if (error instanceof InvalidArgumentException) {
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
-
-            if (error instanceof DataNotFoundException) {
-                status = HttpStatus.NOT_FOUND;
-                errorResponse.message = error.message;
-            }
-
-            return res.status(status).send(errorResponse);
+            next(error);
         }
     }
 
