@@ -11,7 +11,7 @@ export default class ProductRepository {
             .populate("category")
             .populate("supplier")
             .populate("purchases");
-            // .populate("orders");
+        // .populate("orders");
 
         return product;
     }
@@ -22,30 +22,30 @@ export default class ProductRepository {
         return product;
     }
 
-    async addPurchase(id: string, purchaseId: string): Promise<IProduct|null> {
+    async addPurchase(id: string, purchaseId: string): Promise<IProduct | null> {
 
         const purchase = await Purchase.findById(purchaseId);
-        
-        if(purchase != null){
-            const product = await Product.findByIdAndUpdate(id, 
-                { $push: {purchases: purchase._id}}, 
-                { new: true, useFindAndModify: false});
-            
+
+        if (purchase != null) {
+            const product = await Product.findByIdAndUpdate(id,
+                { $push: { purchases: purchase._id } },
+                { new: true, useFindAndModify: false });
+
             return product;
         }
 
         throw new DataNotFoundException("Purchase not find");
     }
 
-    async addPayment(id: string, paymentId: string): Promise<IProduct|null> {
+    async addPayment(id: string, paymentId: string): Promise<IProduct | null> {
 
         const payment = await Payment.findById(paymentId);
-        
-        if(payment != null){
-            const product = await Product.findByIdAndUpdate(id, 
-                { $push: {payments: payment._id}}, 
-                { new: true, useFindAndModify: false});
-            
+
+        if (payment != null) {
+            const product = await Product.findByIdAndUpdate(id,
+                { $push: { payments: payment._id } },
+                { new: true, useFindAndModify: false });
+
             return product;
         }
 
@@ -60,7 +60,7 @@ export default class ProductRepository {
     }
 
     async update(id: string, product: IProduct): Promise<UpdateWriteOpResult> {
-        const updatedProduct = await Product.updateOne({ id }, product)
+        const updatedProduct = await Product.updateOne({ id }, { $set: product }, { upsert: true, new: true });
 
         return updatedProduct;
     }

@@ -2,13 +2,12 @@ import { ICoupon } from "./Coupon";
 import { IPayment } from "./Payment";
 import { IUser } from "./User";
 import mongoose, { Schema, Document } from 'mongoose';
-import { IProduct } from "./Product";
 import { ICart } from "./Cart";
 
 export interface IOrder extends Document {
 	cart: ICart;
-	payments?: IPayment[];
-	coupon?: ICoupon;
+	payments: IPayment[] | null;
+	coupon: ICoupon | null;
 }
 
 const orderSchema = new Schema({

@@ -3,7 +3,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface ICategory extends Document {
 	name: string;
-	products: IProduct[];
+	products: IProduct[] | undefined;
 }
 
 const categorySchema = new Schema({

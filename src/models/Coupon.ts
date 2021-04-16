@@ -6,7 +6,7 @@ export interface ICoupon extends Document {
 	code: string;
 	type: CouponType;
 	value: number;
-	orders: IOrder[];
+	orders: IOrder[] | undefined;
 }
 
 const couponSchema = new Schema({

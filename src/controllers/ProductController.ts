@@ -1,10 +1,8 @@
 import { HttpStatus } from '@enumerators/HttpStatus';
 import { DataNotFoundException } from '@helpers/errors/DataNotFoundException';
-import { InvalidArgumentException } from '@helpers/errors/InvalidArgumentException';
 import { IProduct } from '@models/Product';
 import EntityCollectionResponse from '@models/responses/EntityCollectionResponse';
 import EntityResponse from '@models/responses/EntityResponse';
-import ErrorResponse from '@models/responses/ErrorResponse';
 import CategoryService from '@services/CategoryService';
 import ProductService from '@services/ProductService';
 import SupplierService from '@services/SupplierService';
@@ -24,10 +22,9 @@ export default class ProductController {
 
     public postCreate = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
-            let { name, price, costPrice, description, quantity, status, barcode, supplierId, categoryId }:
-                { name: string, price: number, costPrice: number, description: string | undefined, quantity: number, status: number, barcode: string | undefined, supplierId: string | undefined, categoryId: string | undefined } = req.body;
+            let { supplierId, categoryId }: { supplierId: string | undefined, categoryId: string | undefined } = req.body;
             
-            const product = { name, price, costPrice, description, quantity, status, barcode } as IProduct;
+            const product = { ...req.body } as IProduct;
             const supplier = await this.supplierService.getById(supplierId!);
             
             if (supplier != undefined && supplier != null) {
@@ -57,10 +54,8 @@ export default class ProductController {
     public putUpdate = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             let { id } = req.params;
-            let { name, price, costPrice, description, quantity, status, barcode, supplierId, categoryId }:
-                { name: string, price: number, costPrice: number, description: string | undefined, quantity: number, status: number, barcode: string | undefined, supplierId: string | undefined, categoryId: string | undefined } = req.body;
-            
-            const product = { name, price, costPrice, description, quantity, status, barcode, supplier: supplierId, category: categoryId } as IProduct;
+
+            const product = { ...req.body } as IProduct;
             
             const updatedProduct = await this.productService.update(id, product);
 

@@ -1,4 +1,4 @@
-export enum OrderStatus{
+export enum SaleStatus{
     Created,
     WaitingPayment,
     Paid

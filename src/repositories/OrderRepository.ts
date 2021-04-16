@@ -26,7 +26,7 @@ export default class OrderRepository {
     }
 
     async update(id: number, order: IOrder): Promise<UpdateWriteOpResult> {
-        const updatedOrder = await Order.updateOne({ id }, order);
+        const updatedOrder = await Order.updateOne({ id }, { $set: order }, { upsert: true, new: true });
 
         return updatedOrder;
     }

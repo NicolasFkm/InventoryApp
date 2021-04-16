@@ -1,9 +1,13 @@
+import { SaleStatus } from '@enumerators/SaleStatus';
 import mongoose, { Schema, Document } from 'mongoose';
 import { CartItemAttributes } from './CartItem';
 import { IUser } from './User';
 
 export interface ICart extends Document {
-	items: CartItemAttributes[];
+	items: CartItemAttributes[] | undefined;
+	user: IUser;
+	status: SaleStatus
+
 }
 
 const cartSchema = new Schema({
@@ -17,6 +21,15 @@ const cartSchema = new Schema({
 				ref: "Product"
 			}
 		}]
+	},
+	user: {
+		type: Schema.Types.ObjectId,
+		ref: "User"
+	},
+	status: {
+		type: String,
+		enum: Object.values(SaleStatus),
+		default: SaleStatus.Created
 	}
 }, {
 	timestamps: { createdAt: true, updatedAt: true }

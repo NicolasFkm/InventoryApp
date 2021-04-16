@@ -1,10 +1,8 @@
 import { HttpStatus } from '@enumerators/HttpStatus';
 import { DataNotFoundException } from '@helpers/errors/DataNotFoundException';
-import { InvalidArgumentException } from '@helpers/errors/InvalidArgumentException';
 import { ICategory } from '@models/Category';
 import EntityCollectionResponse from '@models/responses/EntityCollectionResponse';
 import EntityResponse from '@models/responses/EntityResponse';
-import ErrorResponse from '@models/responses/ErrorResponse';
 import CategoryService from '@services/CategoryService';
 import { Response, Request, NextFunction } from 'express';
 
@@ -18,9 +16,7 @@ export default class CategoryController {
 
     public postCreate = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
-            let { name }: { name: string } = req.body;
-
-            const category = { name } as ICategory;
+            const category = { ...req.body } as ICategory;
 
             const createdCategory = await this.categoryService.create(category);
 
@@ -38,9 +34,8 @@ export default class CategoryController {
     public putUpdate = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             let { id } = req.params;
-            let { name }: { name: string } = req.body;
 
-            const category = { name } as ICategory;
+            const category = { ...req.body } as ICategory;
 
             const updatedCategory = await this.categoryService.update(id, category);
 

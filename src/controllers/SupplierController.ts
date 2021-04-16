@@ -1,10 +1,8 @@
 import { HttpStatus } from '@enumerators/HttpStatus';
 import { DataNotFoundException } from '@helpers/errors/DataNotFoundException';
-import { InvalidArgumentException } from '@helpers/errors/InvalidArgumentException';
 import { ISupplier } from '@models/Supplier';
 import EntityCollectionResponse from '@models/responses/EntityCollectionResponse';
 import EntityResponse from '@models/responses/EntityResponse';
-import ErrorResponse from '@models/responses/ErrorResponse';
 import SupplierService from '@services/SupplierService';
 import { Response, Request, NextFunction } from 'express';
 
@@ -18,9 +16,7 @@ export default class SupplierController {
 
     public postCreate = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
-            let { name, address, city, state, zipCode }: { name: string, address: string | undefined, city: string | undefined, state: string | undefined, zipCode: string | undefined } = req.body;
-
-            const supplier = { name, address, city, state, zipCode } as ISupplier;
+            const supplier = { ...req.body } as ISupplier;
 
             const createdSupplier = await this.supplierService.create(supplier);
 
@@ -38,9 +34,8 @@ export default class SupplierController {
     public putUpdate = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             let { id } = req.params;
-            let { name, address, city, state, zipCode }: { name: string, address: string | undefined, city: string | undefined, state: string | undefined, zipCode: string | undefined } = req.body;
 
-            const supplier = { name, address, city, state, zipCode } as ISupplier;
+            const supplier = { ...req.body } as ISupplier;
 
             const updatedSupplier = await this.supplierService.update(id, supplier);
 

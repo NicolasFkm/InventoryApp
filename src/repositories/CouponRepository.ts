@@ -23,7 +23,7 @@ export default class CouponRepository {
     }
 
     async update(id: string, coupon: ICoupon): Promise<UpdateWriteOpResult> {
-        const updatedCoupon = await Coupon.updateOne({ id }, coupon)
+        const updatedCoupon = await Coupon.updateOne({ id }, { $set: coupon }, { upsert: true, new: true });
 
         return updatedCoupon;
     }

@@ -1,11 +1,8 @@
 import { HttpStatus } from '@enumerators/HttpStatus';
 import { DataNotFoundException } from '@helpers/errors/DataNotFoundException';
-import { InvalidArgumentException } from '@helpers/errors/InvalidArgumentException';
 import { ICart } from '@models/Cart';
 import { CartItemAttributes } from '@models/CartItem';
 import EntityResponse from '@models/responses/EntityResponse';
-import ErrorResponse from '@models/responses/ErrorResponse';
-import UserRepository from '@repositories/UserRepository';
 import CartService from '@services/CartService';
 import ProductService from '@services/ProductService';
 import UserService from '@services/UserService';
@@ -23,40 +20,22 @@ export default class CartController {
         this.productService = new ProductService();
     }
 
-    public putUpdateCartItem: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
+    public postCreate: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
-            let { id } = req.params;
             let { quantity, product }: CartItemAttributes = req.body;
+            let { userId }: { userId: string} = req.body;
 
             let item = new CartItemAttributes();
             item.product = product;
             item.quantity = quantity;
 
-            let user = await this.userService.getById(id);
+            let cart = { items: [item], user: userId } as unknown as ICart; 
 
-            if(user == null) {
-                throw new DataNotFoundException();
-            }
+            let createdCart: ICart = await this.cartService.create(cart);
+
+            createdCart = createdCart.populate({path: 'items.product', model: 'product'});
             
-            user.cart = user.cart!.populate("items");
-            
-            if (quantity == 0) {
-                user.cart = await this.cartService.removeItem(user.cart.id, item);
-            }
-            else if (user.cart.items?.some(_ => _.product == item.product)) {
-                user.cart = await this.cartService.updateCartItem(user.cart!.id, item);
-            }
-            else {
-                user.cart = await this.cartService.addItem(user.cart!._id, item);
-            }
-
-            if (user.cart == null) {
-                throw new DataNotFoundException();
-            }
-
-            user.save();
-
-            let response = new EntityResponse(user.cart, req.url);
+            let response = new EntityResponse(createdCart, req.url);
 
             let status = HttpStatus.SUCCESS;
 
@@ -67,12 +46,28 @@ export default class CartController {
         }
     }
 
-    public deleteClearCart: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
+    public putUpdateCartItem: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             let { id } = req.params;
-            let user = await this.userService.getById(id);
+            let { quantity, product }: CartItemAttributes = req.body;
 
-            const cart = await this.cartService.clear(user?.cart!.id);
+            let item = new CartItemAttributes();
+            item.product = product;
+            item.quantity = quantity;
+
+            let cart = await this.cartService.getById(id);
+
+            cart = cart.populate("items");
+            
+            if (quantity == 0) {
+                cart = await this.cartService.removeItem(cart.id, item);
+            }
+            else if (cart.items?.some(_ => _.product == item.product)) {
+                cart = await this.cartService.updateCartItem(cart!.id, item);
+            }
+            else {
+                cart = await this.cartService.addItem(cart!._id, item);
+            }
 
             if (cart == null) {
                 throw new DataNotFoundException();
@@ -89,17 +84,17 @@ export default class CartController {
         }
     }
 
-    public getByUserId: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
+    public deleteClearCart: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
         try {
             let { id } = req.params;
 
-            const user = await this.userService.getById(id);
+            const cart = await this.cartService.clear(id);
 
-            if (user == null) {
+            if (cart == null) {
                 throw new DataNotFoundException();
             }
 
-            let response = new EntityResponse(user.cart!, req.url);
+            let response = new EntityResponse(cart, req.url);
 
             let status = HttpStatus.SUCCESS;
 
@@ -110,5 +105,25 @@ export default class CartController {
         }
     }
 
+    public getById: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
+        try {
+            let { id } = req.params;
+
+            const cart = await this.cartService.getById(id);
+
+            if (cart == null) {
+                throw new DataNotFoundException();
+            }
+
+            let response = new EntityResponse(cart, req.url);
+
+            let status = HttpStatus.SUCCESS;
+
+            return res.status(status).send(response);
+        }
+        catch (error) {
+            next(error);
+        }
+    }
 
 }

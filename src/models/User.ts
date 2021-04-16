@@ -1,7 +1,6 @@
 import { Role } from "@enumerators/Role";
 import { IOrder } from "./Order";
 import mongoose, { Schema, Document } from 'mongoose';
-import { ICart } from "./Cart";
 
 export interface IUser extends Document {
     name: string;
@@ -9,8 +8,7 @@ export interface IUser extends Document {
     email: string;
     password: string;
     role: Role;
-    orders?: IOrder[];
-    cart: ICart|null;
+    orders: IOrder[] | undefined;
 }
 
 const userSchema = new Schema({
@@ -27,19 +25,14 @@ const userSchema = new Schema({
         type: String
     },
     role: {
-        type: Number,
-        min: 0,
-        max: 2,
-        default: 0
+        type: String,
+        enum: Object.values(Role),
+        default: Role.Client
     },
     orders: [{
         type: Schema.Types.ObjectId,
         ref: "Order"
-    }],
-    cart: {
-        type: Schema.Types.ObjectId,
-        ref: "Cart"
-    }
+    }]
 }, {
     timestamps: { createdAt: true, updatedAt: true }
 })

@@ -1,10 +1,10 @@
 import { IPayment } from "./Payment";
 import mongoose, { Schema, Document } from 'mongoose';
-import { IProduct } from "./Product";
 import { ICart } from "./Cart";
+import { SaleStatus } from "@enumerators/SaleStatus";
 
 export interface IPurchase extends Document {
-	payments: (IPayment|null)[];
+	payments: IPayment[] | undefined;
 	cart: ICart;
 }
 

@@ -24,7 +24,7 @@ export default class CategoryRepository {
     }
 
     async update(id: string, category: ICategory): Promise<UpdateWriteOpResult> {
-        const updatedCategory = await Category.updateOne({ id }, category)
+        const updatedCategory = await Category.updateOne({ id }, { $set: category }, { upsert: true, new: true });
 
         return updatedCategory;
     }

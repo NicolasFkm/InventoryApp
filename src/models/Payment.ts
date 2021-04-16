@@ -6,9 +6,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface IPayment extends Document {
 	value: number;
 	type: PaymentType;
-	installments?: number;
-	order?: IOrder;
-	purchase?: IPurchase;
+	installments: number;
 }
 
 const paymentSchema = new Schema({
@@ -16,10 +14,9 @@ const paymentSchema = new Schema({
 		type: Number
 	},
 	type: {
-		type: Number,
-		min: 0,
-		max: 3,
-		default: 0
+		type: String,
+		enum: Object.values(PaymentType),
+		default: PaymentType.Cash
 	},
 	installments: {
 		type: Number

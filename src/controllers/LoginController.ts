@@ -1,7 +1,4 @@
 import { HttpStatus } from '@enumerators/HttpStatus';
-import { DataNotFoundException } from '@helpers/errors/DataNotFoundException';
-import { InvalidArgumentException } from '@helpers/errors/InvalidArgumentException';
-import ErrorResponse from '@models/responses/ErrorResponse';
 import { Response, Request, NextFunction } from 'express';
 import LoginService from '@services/LoginService';
 import Login from '@models/Login';

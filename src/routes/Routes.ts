@@ -27,15 +27,19 @@ export class Routes {
     app.route("/user").get(this.userController.getAll);
     app.route("/user/:id").put(this.userController.putUpdateUser);
     app.route("/user/:id").get(this.userController.getById);
-    app.route("/user/:id/cart").get(this.cartController.getByUserId);
-    app.route("/user/:id/cart").put(this.cartController.putUpdateCartItem);
-    app.route("/user/:id/cart").delete(this.cartController.deleteClearCart);
-
-
+    app.route("/user/:id/cart").get(this.userController.getOpenCartByUserId);
+    
+    app.route("/cart").post(this.cartController.postCreate);
+    app.route("/cart/:id").get(this.cartController.getById);
+    app.route("/cart/:id").put(this.cartController.putUpdateCartItem);
+    app.route("/cart/:id").delete(this.cartController.deleteClearCart);
+  
     app.route("/purchase").post(this.purchaseController.postCreate);
     app.route("/purchase").get(this.purchaseController.getAll);
     app.route("/purchase/:id").get(this.purchaseController.getById);
-
+    app.route("/purchase/:id/payment").put(this.purchaseController.putAddPayment);
+    app.route("/purchase/:id/payment").delete(this.purchaseController.deletePayments);
+    app.route("/purchase/:id/payment/:paymentId").delete(this.purchaseController.deletePaymentById);
 
     app.route("/category").post(this.categoryController.postCreate);
     app.route("/category").get(this.categoryController.getAll);

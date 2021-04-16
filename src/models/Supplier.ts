@@ -3,11 +3,11 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface ISupplier extends Document {
 	name: string;
-	address?: string;
-	city?: string;
-	state?: string;
-	zipCode?: string;
-	products?: IProduct[];
+	address: string;
+	city: string;
+	state: string;
+	zipCode: string;
+	products: IProduct[] | undefined;
 }
 
 const supplierSchema = new Schema({

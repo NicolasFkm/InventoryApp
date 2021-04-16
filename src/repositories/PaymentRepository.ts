@@ -23,7 +23,7 @@ export default class PaymentRepository {
     }
 
     async update(id: string, payment: IPayment): Promise<UpdateWriteOpResult> {
-        const updatedPayment = await Payment.updateOne({ id }, payment)
+        const updatedPayment = await Payment.updateOne({ id }, { $set: payment }, { upsert: true, new: true });
 
         return updatedPayment;
     }

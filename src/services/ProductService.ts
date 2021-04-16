@@ -32,13 +32,9 @@ export default class ProductService {
         return createdProduct;
     }
 
-    async addPurchase(id: string, purchaseId: string, quantity: number = 1) : Promise< IProduct | null >{
-        let product: IProduct | null = null;
-
-        for (let index = 0; index < quantity; index++) {
-            product = await this.productRepository.addPurchase(id, purchaseId);
-        }
-
+    async addPurchase(id: string, purchaseId) : Promise< IProduct | null >{
+        let product: IProduct | null = await this.productRepository.addPurchase(id, purchaseId);
+        
         return product;
     }
 

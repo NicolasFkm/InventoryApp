@@ -5,6 +5,7 @@ import validator from 'validator';
 
 export default class CategoryService {
 
+    
     public categoryRepository: CategoryRepository;
 
     constructor() {

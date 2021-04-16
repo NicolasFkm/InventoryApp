@@ -8,16 +8,16 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IProduct extends Document {
     name: string;
-    barcode?: string;
+    barcode: string | undefined;
     price: number;
     costPrice: number;
-    description?: string;
+    description: string | undefined;
     quantity: number;
-    status?: ProductStatus;
-    category?: ICategory;
-    supplier?: ISupplier;
-    purchases?: IPurchase[];
-    orders?: IOrder[];
+    status: ProductStatus | undefined;
+    category: ICategory | undefined;
+    supplier: ISupplier;
+    purchases: IPurchase[] | undefined;
+    orders: IOrder[] | undefined;
 }
 
 const productSchema = new Schema({

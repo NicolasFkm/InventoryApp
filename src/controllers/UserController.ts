@@ -33,12 +33,6 @@ export default class UserController {
 
             const user = await this.userService.create(account);
 
-            const cart = { } as ICart;
-
-            const createdCart = await this.cartService.create(cart);
-
-            user.cart = createdCart!;
-
             user.save();
 
             let response = new EntityResponse(user, req.url);
@@ -117,5 +111,28 @@ export default class UserController {
         }
     }
 
+    public getOpenCartByUserId = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
+        try {
+            let { id } = req.params;
 
+            const user = await this.userService.getById(id);
+
+            let cart = await this.cartService.getOpenCartByUserId(user);
+
+            if(cart == null){
+                let cartModel = { } as ICart; 
+
+                cart = await this.cartService.create(cartModel);
+            }
+
+            let response = new EntityResponse(user, req.url);
+
+            let status = HttpStatus.SUCCESS;
+
+            return res.status(status).send(response);
+        }
+        catch (error) {
+            next(error);
+        }
+    }
 }

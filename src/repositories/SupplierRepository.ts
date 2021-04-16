@@ -24,7 +24,7 @@ export default class SupplierRepository {
     }
 
     async update(id: string, supplier: ISupplier): Promise<UpdateWriteOpResult> {
-        const updatedUser = await Supplier.updateOne({ id }, supplier)
+        const updatedUser = await Supplier.updateOne({ id }, { $set: supplier }, { upsert: true, new: true });
 
         return updatedUser;
     }

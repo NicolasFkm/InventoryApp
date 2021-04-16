@@ -1,3 +1,4 @@
+import { SaleStatus } from "@enumerators/SaleStatus";
 import { DataNotFoundException } from "@helpers/errors/DataNotFoundException";
 import Cart, { ICart } from "@models/Cart";
 import { CartItemAttributes } from "@models/CartItem";
@@ -7,8 +8,7 @@ import { UpdateWriteOpResult } from "mongoose";
 export default class CategoryRepository {
 
     async getById(id: string): Promise<ICart | null> {
-        let cart = await Cart.findById(id)
-            .populate("Product")
+        let cart = await Cart.findById(id);
 
         return cart;
     }
@@ -26,7 +26,7 @@ export default class CategoryRepository {
         return createdCart;
     }
 
-    async addItem(id: string, cartItem: CartItemAttributes): Promise<ICart | null> {
+    async addItem(id: string, cartItem: CartItemAttributes): Promise<ICart> {
 
         const cart = await Cart.findByIdAndUpdate(id,
             { $push: { items: cartItem } },
@@ -39,7 +39,7 @@ export default class CategoryRepository {
         return cart;
     }
 
-    async removeItem(id: string, productId: string): Promise<ICart | null> {
+    async removeItem(id: string, productId: string): Promise<ICart> {
 
         const cart = await Cart.findByIdAndUpdate(id,
             { $pull: { items: { product: productId } } },
@@ -52,7 +52,7 @@ export default class CategoryRepository {
         return cart;
     }
 
-    async updateItemQuantity(id: string, cartItem: CartItemAttributes): Promise<ICart | null> {
+    async updateItemQuantity(id: string, cartItem: CartItemAttributes): Promise<ICart> {
 
         const cart = await Cart.findById(id);
 
@@ -60,10 +60,10 @@ export default class CategoryRepository {
             throw new DataNotFoundException("Couldn't find the cart");
         }
 
-        cart.items = cart?.items.map(item => {
-            if(item.product != cartItem.product)
+        cart.items = cart.items!.map(item => {
+            if (item.product != cartItem.product)
                 return item;
-            
+
             item.quantity = cartItem.quantity;
             return item;
         })
@@ -73,7 +73,7 @@ export default class CategoryRepository {
         return cart;
     }
 
-    async clearCart(id: string): Promise<ICart | null> {
+    async clearCart(id: string): Promise<ICart> {
         const cart = await Cart.findByIdAndUpdate(id,
             { $set: { items: [] } },
             { new: true, useFindAndModify: false });
@@ -87,7 +87,13 @@ export default class CategoryRepository {
 
 
     async update(id: string, cart: ICart): Promise<UpdateWriteOpResult> {
-        const updatedCart = await Cart.updateOne({ id }, cart)
+        const updatedCart = await Cart.updateOne({ id }, { $set: cart }, { upsert: true, new: true });
+
+        return updatedCart;
+    }
+
+    async getOpenCartByUserId(user: IUser): Promise<ICart | null> {
+        const updatedCart = await Cart.findOne({ user: user, status: SaleStatus.Created }, {new: true});
 
         return updatedCart;
     }

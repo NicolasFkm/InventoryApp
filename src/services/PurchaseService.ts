@@ -27,12 +27,22 @@ export default class PurchaseService {
         return purchase;
     }
 
-    async addPayment(id: string, paymentId: string) : Promise<IPayment | null >{
-        let payment: IPayment | null = null;
-
-        payment = await this.purchaseRepository.addPayment(id, paymentId);
+    async addPayment(id: string, paymentId: string) : Promise<IPayment >{
+        let payment = await this.purchaseRepository.addPayment(id, paymentId);
 
         return payment;
+    }
+
+    async clearPayments(id: string) : Promise<IPurchase|null>{
+        let purchase = await this.purchaseRepository.clearPayments(id);
+
+        return purchase;
+    }
+
+    async removePaymentById(id: string, paymentId: string) : Promise<IPurchase|null >{
+        let purchase = await this.purchaseRepository.removePayment(id, paymentId);
+
+        return purchase;
     }
 
     async create(purchase: IPurchase): Promise<IPurchase> {

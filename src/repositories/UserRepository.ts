@@ -29,7 +29,7 @@ export default class UserRepository {
     }
 
     async update(id: string, user: IUser): Promise<UpdateWriteOpResult> {
-        const updatedUser = await User.updateOne({ id }, user)
+        const updatedUser = await User.updateOne({ id }, { $set: user }, { upsert: true, new: true });
 
         return updatedUser;
     }

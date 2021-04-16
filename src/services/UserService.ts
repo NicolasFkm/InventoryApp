@@ -1,9 +1,9 @@
-import { Role } from "@enumerators/Role";
 import { InvalidArgumentException } from "@helpers/errors/InvalidArgumentException";
 import { IUser } from "@models/User";
 import UserRepository from "@repositories/UserRepository";
 import validator from 'validator';
 import bcrypt from 'bcrypt';
+import { DataNotFoundException } from "@helpers/errors/DataNotFoundException";
 
 export default class UserService {
 
@@ -14,8 +14,12 @@ export default class UserService {
         this.userRepository = new UserRepository();
     }
 
-    async getById(id: string): Promise<IUser | null> {
+    async getById(id: string): Promise<IUser> {
         const user = await this.userRepository.getById(id);
+
+        if (user == null) {
+            throw new DataNotFoundException("User ID not found.");
+        }
 
         return user;
     }
