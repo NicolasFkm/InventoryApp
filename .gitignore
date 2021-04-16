@@ -119,3 +119,4 @@ dist
 
 mongo-volume/
 *.env
+*.http
